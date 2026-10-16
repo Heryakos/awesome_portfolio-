@@ -1,26 +1,492 @@
 @import "tailwindcss";
 
+/* ═══════════════════════════════════════════════════════════════
+   YEAB ADDIS PORTFOLIO — Global Design System
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Google Fonts already loaded via next/font ─────────────── */
+
+/* ── Design Tokens ──────────────────────────────────────────── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Palette */
+  --paper:   #EFEBE3;
+  --ink:     #111111;
+  --vermilion: #FF4A1C;
+  --ink-40:  rgba(17, 17, 17, 0.4);
+  --ink-10:  rgba(17, 17, 17, 0.08);
+
+  /* Typography */
+  --font-display: var(--font-display, 'Bricolage Grotesque', sans-serif);
+  --font-serif:   var(--font-serif, 'Instrument Serif', serif);
+  --font-mono:    var(--font-mono, 'JetBrains Mono', monospace);
+
+  /* Easing */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-expo:  cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-inout:    cubic-bezier(0.87, 0, 0.13, 1);
+
+  /* Spacing scale */
+  --space-xs:  0.5rem;
+  --space-sm:  1rem;
+  --space-md:  2rem;
+  --space-lg:  4rem;
+  --space-xl:  8rem;
+  --space-2xl: 16rem;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* ── Reset + Base ──────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-display);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  /* Lenis smooth scroll target */
+  scroll-behavior: auto;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--paper);
+  min-height: 100dvh;
+  cursor: default; /* Native OS cursor is always visible and reliable */
+  overflow-x: hidden;
 }
+
+/* Ensure all interactive elements have visible pointer cursor */
+a, button, [role="button"], input, select, textarea, label, [data-cursor="link"] {
+  cursor: pointer;
+}
+
+/* Restore and guarantee cursor visibility inside modals and lightboxes */
+div[role="dialog"], [aria-modal="true"] {
+  cursor: default !important;
+}
+
+div[role="dialog"] button,
+div[role="dialog"] a {
+  cursor: pointer !important;
+}
+
+/* ── Selection ─────────────────────────────────────────────── */
+::selection {
+  background: var(--vermilion);
+  color: var(--paper);
+}
+
+/* ── Scrollbar ─────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 2px; }
+::-webkit-scrollbar-track { background: var(--paper); }
+::-webkit-scrollbar-thumb { background: var(--ink); }
+
+/* ── Focus ─────────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--vermilion);
+  outline-offset: 4px;
+}
+
+/* ── Typography Scale ──────────────────────────────────────── */
+/* Display — huge, editorial */
+.t-display {
+  font-family: var(--font-display);
+  font-size: clamp(4rem, 15vw, 18rem);
+  font-weight: 800;
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+  font-variation-settings: "wdth" 125, "opsz" 72;
+}
+
+/* Hero scale */
+.t-hero {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 10vw, 12rem);
+  font-weight: 700;
+  line-height: 0.92;
+  letter-spacing: -0.025em;
+  font-variation-settings: "wdth" 110, "opsz" 40;
+}
+
+/* Section heading */
+.t-heading {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 5rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+/* Editorial body */
+.t-editorial {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: clamp(1.2rem, 2.5vw, 2.25rem);
+  line-height: 1.35;
+}
+
+/* Body copy */
+.t-body {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  line-height: 1.6;
+  font-weight: 400;
+}
+
+/* Label / metadata */
+.t-label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+/* ── Utility classes ───────────────────────────────────────── */
+.text-vermilion { color: var(--vermilion); }
+.text-paper     { color: var(--paper); }
+.text-ink       { color: var(--ink); }
+.bg-paper       { background: var(--paper); }
+.bg-ink         { background: var(--ink); }
+.bg-vermilion   { background: var(--vermilion); }
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* ── Canvas / WebGL overlay ────────────────────────────────── */
+.canvas-container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ── Custom Cursor (Ambient Trailing Halo) ─────────────────── */
+.cursor {
+  display: none; /* Hide redundant dot so standard arrow pointer is crisp */
+}
+
+.cursor__ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 32px;
+  height: 32px;
+  border: 1.5px solid var(--vermilion);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 100002; /* Always above modals and lightboxes */
+  opacity: 0.45;
+  transition: width 0.3s var(--ease-out-expo),
+              height 0.3s var(--ease-out-expo),
+              opacity 0.2s,
+              border-color 0.2s,
+              background 0.2s;
+}
+
+body.cursor--link .cursor__ring {
+  width: 48px;
+  height: 48px;
+  opacity: 0.75;
+  background: rgba(255, 74, 28, 0.08);
+}
+
+body.cursor--drag .cursor__ring {
+  width: 64px;
+  height: 64px;
+  opacity: 0.85;
+  border-color: var(--vermilion);
+}
+
+/* ── Sections ──────────────────────────────────────────────── */
+section {
+  position: relative;
+}
+
+/* ── Magnetic button ───────────────────────────────────────── */
+.magnetic {
+  display: inline-block;
+  transition: transform 0.4s var(--ease-out-expo);
+}
+
+/* ── Loader ────────────────────────────────────────────────── */
+#loader {
+  position: fixed;
+  inset: 0;
+  background: var(--ink);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+#loader .loader__count {
+  font-family: var(--font-mono);
+  font-size: clamp(5rem, 20vw, 20rem);
+  color: var(--paper);
+  line-height: 1;
+  mix-blend-mode: normal;
+}
+
+#loader .loader__bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  background: var(--vermilion);
+  transition: width 0.1s linear;
+}
+
+/* ── Navigation ────────────────────────────────────────────── */
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  padding: 1.5rem 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  mix-blend-mode: difference;
+}
+
+.nav__logo {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--paper);
+  text-decoration: none;
+  letter-spacing: 0.05em;
+  font-variation-settings: "wdth" 125;
+}
+
+.nav__links {
+  display: flex;
+  gap: 3rem;
+  list-style: none;
+}
+
+.nav__link {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--paper);
+  text-decoration: none;
+  position: relative;
+}
+
+.nav__link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--paper);
+  transition: width 0.3s var(--ease-out-expo);
+}
+
+.nav__link:hover::after { width: 100%; }
+
+/* ── Hero ──────────────────────────────────────────────────── */
+.hero {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── Work section ──────────────────────────────────────────── */
+.work {
+  position: relative;
+  background: var(--paper);
+}
+
+.work__track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+}
+
+.work__item {
+  width: 85vw;
+  height: 100vh;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+  margin-right: 5vw;
+}
+
+/* ── Statement section ─────────────────────────────────────── */
+.statement {
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  padding: var(--space-xl) var(--space-md);
+  overflow: hidden;
+}
+
+/* ── About section ─────────────────────────────────────────── */
+.about {
+  min-height: 100dvh;
+  padding: var(--space-xl) var(--space-md);
+  overflow: hidden;
+  background: var(--ink);
+  color: var(--paper);
+}
+
+/* ── Capabilities section ──────────────────────────────────── */
+.capabilities {
+  min-height: 100dvh;
+  padding: var(--space-xl) var(--space-md);
+  overflow: hidden;
+}
+
+/* ── Contact section ───────────────────────────────────────── */
+.contact {
+  min-height: 100dvh;
+  padding: var(--space-xl) var(--space-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--ink);
+  color: var(--paper);
+  overflow: hidden;
+}
+
+/* ── Reduced motion ────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  body { cursor: auto; }
+  .cursor, .cursor__ring { display: none; }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RESPONSIVE — Mobile-first breakpoints
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Tablet (≤ 1024px) ─────────────────────────────────── */
+@media (max-width: 1024px) {
+  :root {
+    --space-xl:  6rem;
+    --space-2xl: 10rem;
+  }
+
+  .work__item {
+    width: 88vw;
+  }
+}
+
+/* ── Mobile (≤ 768px) ──────────────────────────────────── */
+@media (max-width: 768px) {
+  :root {
+    --space-xl:  4rem;
+    --space-2xl: 7rem;
+  }
+
+  /* Nav */
+  .nav {
+    padding: 1.25rem 1.25rem;
+  }
+  .nav__links {
+    display: none !important;
+  }
+  .nav__menu-btn {
+    display: block !important;
+    cursor: pointer !important;
+  }
+
+  /* Work cards */
+  .work__item {
+    width: 92vw;
+    height: 75vw;
+    min-height: 280px;
+    margin-right: 1rem;
+  }
+
+  /* Statement */
+  .statement {
+    padding: var(--space-xl) 1.25rem;
+  }
+
+  /* About */
+  .about {
+    padding: var(--space-xl) 1.25rem;
+  }
+
+  /* Capabilities */
+  .capabilities {
+    padding: var(--space-xl) 1.25rem;
+  }
+
+  /* Contact */
+  .contact {
+    padding: var(--space-xl) 1.25rem;
+    text-align: center;
+  }
+
+  /* Restore normal cursor on touch devices */
+  body {
+    cursor: auto !important;
+  }
+  .cursor,
+  .cursor__ring {
+    display: none !important;
+  }
+}
+
+/* ── Small mobile (≤ 480px) ────────────────────────────── */
+@media (max-width: 480px) {
+  :root {
+    --space-xl: 3rem;
+  }
+
+  .t-display {
+    font-size: clamp(3rem, 18vw, 6rem);
+  }
+
+  .t-hero {
+    font-size: clamp(2.5rem, 14vw, 5rem);
+  }
+
+  .t-heading {
+    font-size: clamp(1.8rem, 10vw, 3.5rem);
+  }
+
+  .t-editorial {
+    font-size: clamp(1rem, 5vw, 1.4rem);
+  }
+}
+
+@keyframes floatSlow {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
