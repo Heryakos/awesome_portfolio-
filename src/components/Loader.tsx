@@ -9,18 +9,27 @@ export default function Loader({ onComplete }: { onComplete: () => void }) {
   const barRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // If user already visited in this session, skip loader for instant load
+    if (typeof window !== "undefined" && sessionStorage.getItem("yeab_loaded")) {
+      onComplete();
+      return;
+    }
+
     const steps = [
-      { label: "01", hold: 0.4 },
-      { label: "02", hold: 0.3 },
-      { label: "03", hold: 0.3 },
-      { label: "Y",  hold: 0.7 },
+      { label: "01", hold: 0.1 },
+      { label: "02", hold: 0.1 },
+      { label: "03", hold: 0.1 },
+      { label: "Y",  hold: 0.2 },
     ];
 
     const tl = gsap.timeline({
       onComplete: () => {
+        if (typeof window !== "undefined") {
+          sessionStorage.setItem("yeab_loaded", "1");
+        }
         gsap.to(loaderRef.current, {
           yPercent: -100,
-          duration: 1.2,
+          duration: 0.6,
           ease: "expo.inOut",
           onComplete,
         });

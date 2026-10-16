@@ -1,8 +1,15 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Instrument_Serif, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { SITE } from "../../content/site";
 import ClientProviders from "@/components/ClientProviders";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: "#EFEBE3",
+};
 
 // ── Typography ───────────────────────────────────────────
 const bricolage = Bricolage_Grotesque({
