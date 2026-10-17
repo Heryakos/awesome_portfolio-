@@ -23,8 +23,8 @@ export const SITE = {
   // Verified from LinkedIn header banner
   email:     "yeabsira2137@gmail.com",
 
-  // Country code phone (can be customized)
-  phone:     "+251 91 234 5678",
+  // Verified phone number
+  phone:     "+251 98 626 7543",
 
   // ── Social links ──────────────────────────────────────────
   linkedin:  "https://www.linkedin.com/in/yeabaddis21/",

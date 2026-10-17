@@ -5,6 +5,8 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { useMousePosition } from "@/hooks/useMousePosition";
 
+import { useCms } from "./CmsContext";
+
 // ── Custom Y shape built from ExtrudeGeometry ────────────────
 function createYShape(): THREE.Shape {
   const shape = new THREE.Shape();
@@ -31,6 +33,10 @@ function YMesh() {
   const meshRef = useRef<THREE.Mesh>(null!);
   const mouse = useMousePosition();
   const { viewport } = useThree();
+  const cms = useCms();
+  const effects = cms.overrides.effects;
+  const yMaterial = effects?.yMaterial || "obsidian";
+  const speedMult = effects?.ySpeed ?? 1.0;
 
   // Responsive scale: on mobile portrait (Samsung Galaxy S20, iPhone),
   // dynamically scale so the Y fits between the text without clipping
@@ -56,7 +62,7 @@ function YMesh() {
 
   useFrame((state) => {
     if (!groupRef.current) return;
-    const t = state.clock.getElapsedTime();
+    const t = state.clock.getElapsedTime() * speedMult;
 
     // Organic continuous floating rotation (works smoothly on mobile touchscreens)
     const autoRotX = Math.sin(t * 0.7) * 0.14;
@@ -72,22 +78,73 @@ function YMesh() {
     groupRef.current.position.y = posY + floatY;
   });
 
+  // Material properties per theme preset
+  const matProps = useMemo(() => {
+    switch (yMaterial) {
+      case "vermilion":
+        return {
+          color: "#FF4A1C",
+          emissive: "#4A0E00",
+          emissiveIntensity: 0.35,
+          roughness: 0.1,
+          metalness: 0.85,
+          clearcoat: 1.0,
+          clearcoatRoughness: 0.08,
+          wireframe: false,
+        };
+      case "gold":
+        return {
+          color: "#D4AF37",
+          emissive: "#332402",
+          emissiveIntensity: 0.3,
+          roughness: 0.14,
+          metalness: 0.95,
+          clearcoat: 0.9,
+          clearcoatRoughness: 0.1,
+          wireframe: false,
+        };
+      case "chrome":
+        return {
+          color: "#F2F2F2",
+          emissive: "#111111",
+          emissiveIntensity: 0.1,
+          roughness: 0.03,
+          metalness: 1.0,
+          clearcoat: 1.0,
+          clearcoatRoughness: 0.03,
+          wireframe: false,
+        };
+      case "wireframe":
+        return {
+          color: "#FF4A1C",
+          emissive: "#FF4A1C",
+          emissiveIntensity: 0.8,
+          roughness: 0.1,
+          metalness: 0.5,
+          clearcoat: 0,
+          clearcoatRoughness: 0,
+          wireframe: true,
+        };
+      case "obsidian":
+      default:
+        return {
+          color: "#161514",
+          emissive: "#2A1005",
+          emissiveIntensity: 0.2,
+          roughness: 0.06,
+          metalness: 0.88,
+          clearcoat: 1.0,
+          clearcoatRoughness: 0.05,
+          wireframe: false,
+        };
+    }
+  }, [yMaterial]);
+
   return (
     <group ref={groupRef} scale={responsiveScale} position={[0, posY, 0]}>
       <mesh ref={meshRef} geometry={geometry} castShadow receiveShadow>
-        {/* 
-          High-performance Physical Glass/Obsidian material:
-          100% compatible with Samsung Galaxy S20, iOS, Android, and desktop GPUs.
-          Requires zero external FBO passes or shader hacks.
-        */}
         <meshPhysicalMaterial
-          color="#161514"
-          emissive="#2A1005"
-          emissiveIntensity={0.2}
-          roughness={0.06}
-          metalness={0.88}
-          clearcoat={1.0}
-          clearcoatRoughness={0.05}
+          {...matProps}
           reflectivity={1.0}
           ior={1.65}
         />

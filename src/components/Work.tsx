@@ -8,6 +8,8 @@ import Link from "next/link";
 import { PROJECTS } from "../../content/projects";
 import PlaceholderArtwork from "./PlaceholderArtwork";
 
+import { useCms } from "./CmsContext";
+
 gsap.registerPlugin(ScrollTrigger);
 
 const CARD_HEIGHT = 88;
@@ -17,6 +19,25 @@ const CARD_GAP    = 5;
 export default function Work() {
   const sectionRef = useRef<HTMLElement>(null);
   const trackRef  = useRef<HTMLDivElement>(null);
+  const cms = useCms();
+
+  const hiddenSlugs = cms.overrides.hiddenProjects || [];
+  const customProjects = (cms.overrides.customProjects || []).map((cp, idx) => ({
+    index: `0${idx + 1}`,
+    slug: cp.slug,
+    title: cp.title,
+    discipline: cp.category || "Design",
+    year: cp.year || "2026",
+    client: cp.client || "Client",
+    images: cp.heroImage ? [cp.heroImage] : [],
+    palette: ["#1a1a1a", "#FF4A1C", "#EFEBE3"] as [string, string, string],
+    deliverables: cp.deliverables || ["Brand Identity"],
+    placeholder: !cp.heroImage,
+  }));
+
+  const allProjects = [...customProjects, ...PROJECTS].filter(
+    (p) => !hiddenSlugs.includes(p.slug)
+  );
 
   useEffect(() => {
     const isMobile = window.innerWidth < 768;
@@ -59,7 +80,7 @@ export default function Work() {
     >
       {/* Labels */}
       <div className="t-label" style={{ position:"absolute", top:"1.5rem", left:"2.5rem", zIndex:20, opacity:0.45 }}>
-        Selected Work — {PROJECTS.length} Projects
+        Selected Work — {allProjects.length} Projects
       </div>
       <div className="t-label" style={{ position:"absolute", top:"1.5rem", right:"2.5rem", zIndex:20, opacity:0.3 }}>
         Scroll →
@@ -79,7 +100,7 @@ export default function Work() {
           willChange: "transform",
         }}
       >
-        {PROJECTS.map((project, i) => (
+        {allProjects.map((project, i) => (
           <article
             key={project.slug}
             style={{

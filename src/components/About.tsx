@@ -6,6 +6,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SITE } from "../../content/site";
 import CertificateLightbox from "./CertificateLightbox";
+import { useCms } from "./CmsContext";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -216,6 +217,22 @@ export default function About() {
   const statsRef = useRef<HTMLDivElement>(null);
   const iconsRef = useRef<HTMLDivElement>(null);
   const [activeCertIndex, setActiveCertIndex] = useState<number | null>(null);
+  const cms = useCms();
+
+  const hiddenCerts = cms.overrides.hiddenCerts || [];
+  const customCerts = (cms.overrides.customCerts || []).map((c) => ({
+    title: c.title,
+    issuer: c.issuer || "Accredited Issuer",
+    date: c.date || "Recent",
+    url: c.credentialUrl || "#",
+    skills: ["Graphic Design", "Visual Identity"],
+    description: "Verified certification in professional graphic design & communications.",
+    image: c.image || "/certificates/humanitarian-information-management.jpg",
+  }));
+
+  const allCerts = [...customCerts, ...SITE.certifications].filter(
+    (c) => !hiddenCerts.includes(c.title)
+  );
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -512,7 +529,7 @@ export default function About() {
           gap: "1.25rem",
           marginBottom: "clamp(2.5rem, 5vh, 4rem)",
         }}>
-          {SITE.certifications.map((cert, idx) => (
+          {allCerts.map((cert, idx) => (
             <div
               key={cert.title}
               data-cursor="link"
@@ -560,7 +577,7 @@ export default function About() {
                         fontWeight: 700,
                       }}
                     >
-                      {idx + 1}/{SITE.certifications.length}
+                      {idx + 1}/{allCerts.length}
                     </span>
                   </div>
                 </div>
@@ -959,7 +976,7 @@ export default function About() {
 
       {/* Interactive Certificate Lightbox Modal */}
       <CertificateLightbox
-        certificates={SITE.certifications}
+        certificates={allCerts}
         selectedIndex={activeCertIndex}
         onClose={() => setActiveCertIndex(null)}
         onSelectIndex={setActiveCertIndex}
