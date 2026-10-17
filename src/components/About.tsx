@@ -303,16 +303,20 @@ export default function About() {
           {/* Bio paragraphs */}
           <div ref={bioRef} style={{ marginBottom:"clamp(2rem, 4vh, 3rem)" }}>
             {SITE.bio.map((para, i) => (
-              <p key={i} style={{
-                fontFamily: i === 0 ? "var(--font-serif)" : "var(--font-display)",
-                fontStyle: i === 0 ? "italic" : "normal",
-                fontWeight: i === 0 ? 400 : 300,
-                fontSize: "clamp(0.95rem, 1.5vw, 1.3rem)",
-                lineHeight: 1.55,
-                color: "rgba(239,235,227,0.75)",
-                marginBottom: "1rem",
-                maxWidth: "50ch",
-              }}>
+              <p
+                key={i}
+                id={`cms-bio-${i + 1}`}
+                style={{
+                  fontFamily: i === 0 ? "var(--font-serif)" : "var(--font-display)",
+                  fontStyle: i === 0 ? "italic" : "normal",
+                  fontWeight: i === 0 ? 400 : 300,
+                  fontSize: "clamp(0.95rem, 1.5vw, 1.3rem)",
+                  lineHeight: 1.55,
+                  color: "rgba(239,235,227,0.75)",
+                  marginBottom: "1rem",
+                  maxWidth: "50ch",
+                }}
+              >
                 {para}
               </p>
             ))}
@@ -328,7 +332,11 @@ export default function About() {
               marginTop: "0.5rem",
             }}>
               <span style={{ fontSize:"1rem" }} aria-hidden="true">🎓</span>
-              <span className="t-label" style={{ color:"rgba(239,235,227,0.5)" }}>
+              <span
+                id="cms-education"
+                className="t-label"
+                style={{ color:"rgba(239,235,227,0.5)" }}
+              >
                 {SITE.education.degree} · {SITE.education.school} · {SITE.education.year}
               </span>
             </div>
@@ -336,19 +344,26 @@ export default function About() {
 
           {/* Stats */}
           <div ref={statsRef} style={{ display:"grid", gridTemplateColumns:"repeat(4, 1fr)", gap:"1rem" }}>
-            {SITE.stats.map((s) => (
+            {SITE.stats.map((s, i) => (
               <div key={s.label} className="stat">
-                <div style={{
-                  fontFamily: "var(--font-display)",
-                  fontWeight: 800,
-                  fontSize: "clamp(1.8rem, 3vw, 3.5rem)",
-                  color: "var(--vermilion)",
-                  lineHeight: 1,
-                  letterSpacing: "-0.03em",
-                }}>
+                <div
+                  id={`cms-stat-val-${i + 1}`}
+                  style={{
+                    fontFamily: "var(--font-display)",
+                    fontWeight: 800,
+                    fontSize: "clamp(1.8rem, 3vw, 3.5rem)",
+                    color: "var(--vermilion)",
+                    lineHeight: 1,
+                    letterSpacing: "-0.03em",
+                  }}
+                >
                   {s.value}
                 </div>
-                <div className="t-label" style={{ color:"rgba(239,235,227,0.4)", marginTop:"0.3rem" }}>
+                <div
+                  id={`cms-stat-lbl-${i + 1}`}
+                  className="t-label"
+                  style={{ color:"rgba(239,235,227,0.4)", marginTop:"0.3rem" }}
+                >
                   {s.label}
                 </div>
               </div>

@@ -126,7 +126,7 @@ export default function Contact() {
               onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "var(--vermilion)"; }}
               onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "var(--paper)"; }}
             >
-              {SITE.email}
+              <span id="cms-email">{SITE.email}</span>
             </span>
           </div>
         </MagneticLink>
@@ -152,7 +152,7 @@ export default function Contact() {
               onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "var(--vermilion)"; }}
               onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "var(--paper)"; }}
             >
-              {SITE.phone}
+              <span id="cms-phone">{SITE.phone}</span>
             </span>
           </div>
         </MagneticLink>
@@ -170,7 +170,7 @@ export default function Contact() {
             color: "var(--paper)",
             opacity: 0.7,
           }}>
-            {SITE.location}
+            <span id="cms-location">{SITE.location}</span>
           </span>
         </div>
       </div>

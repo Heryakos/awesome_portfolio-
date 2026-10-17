@@ -85,6 +85,7 @@ export default function Hero() {
 
       {/* ── Dedication Badge: Yeab My Crush ── */}
       <div
+        id="cms-dedication-badge"
         style={{
           position: "absolute",
           top: "clamp(4.8rem, 8vh, 5.8rem)",
@@ -105,6 +106,7 @@ export default function Hero() {
       >
         <span style={{ fontSize: "0.95rem" }} aria-hidden="true">❤️</span>
         <span
+          id="cms-dedication-text"
           style={{
             fontFamily: "var(--font-mono)",
             fontSize: "clamp(0.65rem, 1.2vw, 0.75rem)",
@@ -143,7 +145,7 @@ export default function Hero() {
             fontVariationSettings: '"wdth" 130, "opsz" 72',
           }}
         >
-          YEAB
+          <span id="cms-name">YEAB</span>
         </span>
       </div>
 
@@ -198,7 +200,7 @@ export default function Hero() {
           willChange: "transform, opacity",
         }}
       >
-        {SITE.role} — Visual identity &amp; brand experience
+        <span id="cms-role">{SITE.role}</span> — <span id="cms-role-sub">Visual identity &amp; brand experience</span>
       </p>
 
       {/* Scroll hint — bottom right */}

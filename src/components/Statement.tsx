@@ -133,7 +133,7 @@ export default function Statement() {
                 willChange: "transform, opacity, font-variation-settings",
               }}
             >
-              {line.text}
+              <span id={`cms-statement-${i + 1}`}>{line.text}</span>
             </span>
           </div>
         ))}
