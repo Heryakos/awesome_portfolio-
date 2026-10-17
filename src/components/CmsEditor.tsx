@@ -117,16 +117,26 @@ export default function CmsEditor() {
   });
   const [showAddCert, setShowAddCert] = useState(false);
 
-  // Initialize position on mount
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Initialize position on mount & track mobile resize
   useEffect(() => {
-    if (position.x === -1) {
-      setPosition({ x: Math.max(10, window.innerWidth - 410), y: 70 });
-    }
+    const handleResize = () => {
+      const mobile = window.innerWidth < 640;
+      setIsMobile(mobile);
+      if (!mobile && position.x === -1) {
+        setPosition({ x: Math.max(10, window.innerWidth - 410), y: 70 });
+      }
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, [position.x]);
 
-  // Dragging logic
+  // Dragging logic (desktop only)
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
+      if (isMobile) return;
       if ((e.target as HTMLElement).closest("input, select, textarea, button")) return;
       setIsDragging(true);
       setDragOffset({
@@ -134,7 +144,7 @@ export default function CmsEditor() {
         y: e.clientY - position.y,
       });
     },
-    [position]
+    [position, isMobile]
   );
 
   useEffect(() => {
@@ -241,27 +251,67 @@ export default function CmsEditor() {
       aria-label="Visual CMS Design Studio"
       style={{
         position: "fixed",
-        top: position.y,
-        left: position.x,
-        width: 380,
-        maxHeight: "85vh",
+        ...(isMobile
+          ? {
+              bottom: 0,
+              left: 0,
+              right: 0,
+              width: "100%",
+              maxWidth: "100vw",
+              maxHeight: "84dvh",
+              borderRadius: "22px 22px 0 0",
+              borderBottom: "none",
+            }
+          : {
+              top: position.y,
+              left: position.x,
+              width: 380,
+              maxHeight: "85vh",
+              borderRadius: 18,
+            }),
         zIndex: 100010,
-        background: "rgba(16, 17, 20, 0.96)",
-        backdropFilter: "blur(28px)",
-        borderRadius: 18,
-        border: "1px solid rgba(255, 255, 255, 0.08)",
+        background: "rgba(16, 17, 20, 0.97)",
+        backdropFilter: "blur(32px)",
+        border: "1px solid rgba(255, 255, 255, 0.09)",
         boxShadow:
-          "0 32px 90px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 74, 28, 0.2)",
+          "0 32px 90px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 74, 28, 0.2)",
         color: "#e8e4dc",
         fontFamily: "var(--font-mono), monospace",
         fontSize: "0.72rem",
         overflow: "hidden",
-        cursor: isDragging ? "grabbing" : "default",
-        userSelect: isDragging ? "none" : "auto",
+        cursor: !isMobile && isDragging ? "grabbing" : "default",
+        userSelect: !isMobile && isDragging ? "none" : "auto",
         display: "flex",
         flexDirection: "column",
       }}
     >
+      {/* Mobile pull tab indicator */}
+      {isMobile && (
+        <button
+          onClick={() => cms.setEditorOpen(false)}
+          title="Tap to minimize"
+          aria-label="Tap to minimize Design Studio"
+          style={{
+            width: "100%",
+            background: "none",
+            border: "none",
+            padding: "8px 0 4px",
+            display: "flex",
+            justifyContent: "center",
+            cursor: "pointer",
+          }}
+        >
+          <div
+            style={{
+              width: 42,
+              height: 4,
+              borderRadius: 2,
+              background: "rgba(255, 255, 255, 0.35)",
+            }}
+          />
+        </button>
+      )}
+
       {/* ── Top Bar with Live Indicator & Direct Logout ── */}
       <div
         onMouseDown={handleMouseDown}
@@ -269,10 +319,11 @@ export default function CmsEditor() {
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          padding: "12px 16px",
+          padding: isMobile ? "6px 14px 10px" : "12px 16px",
           background: "rgba(255, 74, 28, 0.07)",
           borderBottom: "1px solid rgba(255, 255, 255, 0.07)",
-          cursor: isDragging ? "grabbing" : "grab",
+          cursor: isMobile ? "default" : isDragging ? "grabbing" : "grab",
+          flexShrink: 0,
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -289,7 +340,7 @@ export default function CmsEditor() {
           <span
             style={{
               fontWeight: 800,
-              fontSize: "0.82rem",
+              fontSize: isMobile ? "0.78rem" : "0.82rem",
               letterSpacing: "0.08em",
               textTransform: "uppercase",
               background: "linear-gradient(135deg, #FF4A1C, #FFA07A)",
@@ -358,6 +409,10 @@ export default function CmsEditor() {
           borderBottom: "1px solid rgba(255, 255, 255, 0.06)",
           padding: "0 4px",
           background: "rgba(0,0,0,0.25)",
+          overflowX: "auto",
+          WebkitOverflowScrolling: "touch",
+          scrollbarWidth: "none",
+          flexShrink: 0,
         }}
       >
         {tabs.map((tab) => (
@@ -365,8 +420,9 @@ export default function CmsEditor() {
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             style={{
-              flex: 1,
-              padding: "8px 2px",
+              flex: isMobile ? "0 0 auto" : 1,
+              minWidth: isMobile ? 54 : 44,
+              padding: isMobile ? "8px 6px" : "8px 2px",
               background: "none",
               border: "none",
               borderBottom:
@@ -381,6 +437,7 @@ export default function CmsEditor() {
               alignItems: "center",
               gap: 2,
               transition: "all 0.15s",
+              whiteSpace: "nowrap",
             }}
           >
             <span style={{ fontSize: "0.85rem" }}>{tab.icon}</span>
@@ -392,9 +449,11 @@ export default function CmsEditor() {
       {/* ── Scrollable Tab Content ── */}
       <div
         style={{
-          padding: 16,
+          padding: isMobile ? "12px 14px 20px" : 16,
           overflowY: "auto",
-          maxHeight: "calc(85vh - 110px)",
+          WebkitOverflowScrolling: "touch",
+          overscrollBehavior: "contain",
+          maxHeight: isMobile ? "calc(84dvh - 100px)" : "calc(85vh - 110px)",
           flex: 1,
         }}
       >
@@ -1176,7 +1235,7 @@ export default function CmsEditor() {
               Share your customizations with your developer, or backup and restore them.
             </p>
 
-            <div style={{ display: "flex", gap: 8 }}>
+            <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", gap: 8 }}>
               <button
                 onClick={handleDownload}
                 style={{
@@ -1366,12 +1425,15 @@ export default function CmsEditor() {
       {/* ── Footer status bar ── */}
       <div
         style={{
-          padding: "8px 16px",
+          padding: isMobile
+            ? "10px 16px calc(12px + env(safe-area-inset-bottom, 0px))"
+            : "8px 16px",
           borderTop: "1px solid rgba(255,255,255,0.06)",
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
           background: "rgba(0,0,0,0.3)",
+          flexShrink: 0,
         }}
       >
         <span style={{ color: "#666", fontSize: "0.6rem" }}>

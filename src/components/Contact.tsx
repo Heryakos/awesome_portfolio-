@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SITE } from "../../content/site";
@@ -267,6 +268,23 @@ export default function Contact() {
         <span>© {new Date().getFullYear()} {SITE.name}</span>
         <span>{SITE.role}</span>
         <span>{SITE.location}</span>
+        <Link
+          href="/admin"
+          style={{
+            color: "inherit",
+            textDecoration: "none",
+            cursor: "pointer",
+            transition: "all 0.2s",
+          }}
+          onMouseEnter={(e) => {
+            (e.currentTarget as HTMLElement).style.color = "var(--vermilion)";
+          }}
+          onMouseLeave={(e) => {
+            (e.currentTarget as HTMLElement).style.color = "inherit";
+          }}
+        >
+          Studio 🔒
+        </Link>
       </div>
 
       <style>{`

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useCms } from "@/components/CmsContext";
 
 export default function AdminLogin() {
@@ -55,7 +56,7 @@ export default function AdminLogin() {
         alignItems: "center",
         justifyContent: "center",
         background: "#0a0a0a",
-        padding: "2rem",
+        padding: "1.25rem 1rem",
         position: "relative",
         overflow: "hidden",
       }}
@@ -97,7 +98,7 @@ export default function AdminLogin() {
         style={{
           width: "100%",
           maxWidth: 400,
-          padding: "2.5rem 2rem",
+          padding: "2.2rem 1.6rem",
           background: "rgba(18, 18, 18, 0.85)",
           backdropFilter: "blur(24px)",
           borderRadius: 20,
@@ -316,6 +317,32 @@ export default function AdminLogin() {
           Enter Studio →
         </button>
 
+        {/* Back to Portfolio Link */}
+        <div style={{ textAlign: "center", marginTop: "1.2rem" }}>
+          <Link
+            href="/"
+            style={{
+              fontFamily: "var(--font-mono), monospace",
+              fontSize: "0.72rem",
+              color: "#888",
+              textDecoration: "none",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 6,
+              transition: "all 0.2s",
+              padding: "4px 8px",
+            }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLElement).style.color = "#FF4A1C";
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLElement).style.color = "#888";
+            }}
+          >
+            ← Back to Portfolio
+          </Link>
+        </div>
+
         {/* Footer */}
         <p
           style={{
@@ -323,7 +350,7 @@ export default function AdminLogin() {
             fontFamily: "var(--font-mono), monospace",
             fontSize: "0.6rem",
             color: "#444",
-            marginTop: "1.5rem",
+            marginTop: "1.2rem",
             letterSpacing: "0.08em",
           }}
         >

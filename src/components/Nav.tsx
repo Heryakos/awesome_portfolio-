@@ -29,7 +29,22 @@ export default function Nav() {
       lastY = y;
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+
+    // Keyboard shortcut to access Studio /admin: Alt+A or Ctrl+Shift+A
+    const handleKey = (e: KeyboardEvent) => {
+      if (
+        (e.altKey && e.key.toLowerCase() === "a") ||
+        (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "a")
+      ) {
+        window.location.href = "/admin";
+      }
+    };
+    window.addEventListener("keydown", handleKey);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("keydown", handleKey);
+    };
   }, []);
 
   // Mobile menu animation
@@ -82,6 +97,29 @@ export default function Nav() {
                 <a href={item.href} className="nav__link">{item.label}</a>
               </li>
             ))}
+            <li key="admin-nav" style={{ marginLeft: "0.4rem" }}>
+              <Link
+                href="/admin"
+                className="nav__link"
+                title="Design Studio Admin (Alt+A)"
+                aria-label="Design Studio Admin"
+                style={{
+                  opacity: 0.45,
+                  fontSize: "0.8rem",
+                  transition: "all 0.2s",
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLElement).style.opacity = "1";
+                  (e.currentTarget as HTMLElement).style.color = "var(--vermilion)";
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLElement).style.opacity = "0.45";
+                  (e.currentTarget as HTMLElement).style.color = "inherit";
+                }}
+              >
+                🔒
+              </Link>
+            </li>
           </ul>
         )}
 
@@ -161,6 +199,31 @@ export default function Nav() {
               </a>
             </li>
           ))}
+          <li className="menu__item" style={{ marginTop: "1.5rem" }}>
+            <Link
+              href="/admin"
+              onClick={() => setMenuOpen(false)}
+              style={{
+                textDecoration: "none",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 8,
+                padding: "8px 16px",
+                background: "rgba(255, 74, 28, 0.12)",
+                border: "1px solid rgba(255, 74, 28, 0.35)",
+                borderRadius: 999,
+                color: "var(--vermilion)",
+                fontFamily: "var(--font-mono)",
+                fontSize: "0.75rem",
+                fontWeight: 700,
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+              }}
+            >
+              <span>🎨</span>
+              <span>Design Studio / Admin →</span>
+            </Link>
+          </li>
         </ul>
         <div className="menu__item t-label text-paper" style={{ marginTop: "4rem", opacity: 0.4 }}>
           {SITE.email}
