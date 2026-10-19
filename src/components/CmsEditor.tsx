@@ -249,6 +249,11 @@ export default function CmsEditor() {
       ref={panelRef}
       role="dialog"
       aria-label="Visual CMS Design Studio"
+      data-lenis-prevent="true"
+      data-lenis-prevent-wheel="true"
+      data-lenis-prevent-touch="true"
+      onWheel={(e) => e.stopPropagation()}
+      onTouchMove={(e) => e.stopPropagation()}
       style={{
         position: "fixed",
         ...(isMobile
@@ -258,7 +263,8 @@ export default function CmsEditor() {
               right: 0,
               width: "100%",
               maxWidth: "100vw",
-              maxHeight: "84dvh",
+              height: "85dvh",
+              maxHeight: "85dvh",
               borderRadius: "22px 22px 0 0",
               borderBottom: "none",
             }
@@ -266,11 +272,12 @@ export default function CmsEditor() {
               top: position.y,
               left: position.x,
               width: 380,
+              height: "85vh",
               maxHeight: "85vh",
               borderRadius: 18,
             }),
         zIndex: 100010,
-        background: "rgba(16, 17, 20, 0.97)",
+        background: "rgba(16, 17, 20, 0.98)",
         backdropFilter: "blur(32px)",
         border: "1px solid rgba(255, 255, 255, 0.09)",
         boxShadow:
@@ -447,13 +454,22 @@ export default function CmsEditor() {
 
       {/* ── Scrollable Tab Content ── */}
       <div
+        data-lenis-prevent="true"
+        data-lenis-prevent-wheel="true"
+        data-lenis-prevent-touch="true"
+        onWheel={(e) => e.stopPropagation()}
+        onTouchMove={(e) => e.stopPropagation()}
+        className="cms-scroll-area"
         style={{
-          padding: isMobile ? "12px 14px 20px" : 16,
+          padding: isMobile ? "12px 14px 20px" : "14px 16px 24px",
           overflowY: "auto",
+          overflowX: "hidden",
           WebkitOverflowScrolling: "touch",
           overscrollBehavior: "contain",
-          maxHeight: isMobile ? "calc(84dvh - 100px)" : "calc(85vh - 110px)",
-          flex: 1,
+          flex: "1 1 0%",
+          minHeight: 0,
+          scrollbarWidth: "thin",
+          scrollbarColor: "rgba(255, 74, 28, 0.5) rgba(255, 255, 255, 0.06)",
         }}
       >
         {/* ── THEMES TAB ── */}
@@ -1494,6 +1510,23 @@ export default function CmsEditor() {
           <span>Logout</span>
         </button>
       </div>
+
+      <style>{`
+        .cms-scroll-area::-webkit-scrollbar {
+          width: 7px;
+        }
+        .cms-scroll-area::-webkit-scrollbar-track {
+          background: rgba(255, 255, 255, 0.04);
+          border-radius: 4px;
+        }
+        .cms-scroll-area::-webkit-scrollbar-thumb {
+          background: rgba(255, 74, 28, 0.45);
+          border-radius: 4px;
+        }
+        .cms-scroll-area::-webkit-scrollbar-thumb:hover {
+          background: rgba(255, 74, 28, 0.85);
+        }
+      `}</style>
     </div>
   );
 }
