@@ -234,6 +234,38 @@ export default function About() {
     (c) => !hiddenCerts.includes(c.title)
   );
 
+  const [reviewFilter, setReviewFilter] = useState<"all" | "5star" | "reviews" | "logo" | "youtube">("all");
+  const hiddenReviews = (cms.overrides as any).hiddenReviews || [];
+  const customReviews = ((cms.overrides as any).customReviews || []).map((r: any) => ({
+    id: r.id || `custom-${Date.now()}`,
+    title: r.title,
+    client: r.client || "Upwork Client",
+    project: r.project || r.title,
+    quote: r.quote || "Completed successfully.",
+    response: r.response || undefined,
+    rating: r.rating || "5.0",
+    stars: r.stars || (r.rating ? "★★★★★" : "Completed"),
+    date: r.date || "Recent",
+    type: r.type || "Fixed Price",
+    category: r.category || "logo",
+    verified: true,
+    platform: "Upwork Verified Contract",
+    endorsement: r.endorsement || "Committed to Quality",
+    highlight: r.highlight || "Delivered per client requirements.",
+  }));
+
+  const allReviews = [...customReviews, ...SITE.testimonials].filter(
+    (r: any) => !hiddenReviews.includes(r.id)
+  );
+
+  const filteredReviews = allReviews.filter((r: any) => {
+    if (reviewFilter === "5star") return r.rating === "5.0";
+    if (reviewFilter === "reviews") return r.rating !== null && r.quote && r.quote.length > 5;
+    if (reviewFilter === "logo") return r.category === "logo" || r.category === "branding";
+    if (reviewFilter === "youtube") return r.category === "youtube" || r.category === "graphics";
+    return true;
+  });
+
   useEffect(() => {
     const ctx = gsap.context(() => {
       // Headline
@@ -766,10 +798,10 @@ export default function About() {
                   marginBottom: "0.4rem",
                 }}
               >
-                5.0 ★ Client Feedback &amp; Verified Work
+                Upwork Client Reviews &amp; Completed Contracts
               </h3>
-              <p style={{ color: "rgba(239,235,227,0.65)", fontSize: "0.88rem", maxWidth: "48ch" }}>
-                Proven results delivered for founders, international creators, and enterprise clients across logo design, packaging, and digital media.
+              <p style={{ color: "rgba(239,235,227,0.65)", fontSize: "0.88rem", maxWidth: "52ch" }}>
+                100% real and authentic work history directly from Upwork — showcasing all completed contracts, genuine client feedback, star ratings, and client endorsements.
               </p>
             </div>
 
@@ -793,6 +825,39 @@ export default function About() {
                 <span>✓</span>
                 <span>TOP RATED ON UPWORK</span>
               </span>
+
+              {cms.isAuth && (
+                <button
+                  type="button"
+                  onClick={() => cms.setEditorOpen(true)}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "0.35rem",
+                    padding: "0.45rem 1rem",
+                    background: "rgba(20, 168, 0, 0.15)",
+                    border: "1px solid rgba(20, 168, 0, 0.4)",
+                    borderRadius: "4px",
+                    color: "#5cdb5c",
+                    fontFamily: "var(--font-mono)",
+                    fontSize: "0.68rem",
+                    fontWeight: 700,
+                    cursor: "pointer",
+                    transition: "all 0.2s",
+                  }}
+                  onMouseEnter={(e) => {
+                    (e.currentTarget as HTMLElement).style.background = "#14a800";
+                    (e.currentTarget as HTMLElement).style.color = "#fff";
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.currentTarget as HTMLElement).style.background = "rgba(20, 168, 0, 0.15)";
+                    (e.currentTarget as HTMLElement).style.color = "#5cdb5c";
+                  }}
+                >
+                  <span>⭐</span>
+                  <span>+ Add Upwork Job</span>
+                </button>
+              )}
 
               <a
                 href={SITE.upwork}
@@ -837,20 +902,20 @@ export default function About() {
             }}
           >
             <div style={{ background: "rgba(239,235,227,0.03)", border: "1px solid rgba(239,235,227,0.08)", borderRadius: "4px", padding: "1.2rem" }}>
-              <div style={{ color: "#FFD700", fontSize: "1.4rem", fontWeight: 800, fontFamily: "var(--font-mono)", marginBottom: "0.2rem" }}>
-                5.0 ★
+              <div style={{ color: "var(--paper)", fontSize: "1.4rem", fontWeight: 800, fontFamily: "var(--font-mono)", marginBottom: "0.2rem" }}>
+                {allReviews.length} Contracts
               </div>
               <div className="t-label" style={{ opacity: 0.5, color: "var(--paper)", fontSize: "0.62rem" }}>
-                100% 5-Star Client Rating
+                100% Real Upwork Jobs Listed
               </div>
             </div>
 
             <div style={{ background: "rgba(239,235,227,0.03)", border: "1px solid rgba(239,235,227,0.08)", borderRadius: "4px", padding: "1.2rem" }}>
-              <div style={{ color: "var(--paper)", fontSize: "1.4rem", fontWeight: 800, fontFamily: "var(--font-mono)", marginBottom: "0.2rem" }}>
-                11+ Jobs
+              <div style={{ color: "#FFD700", fontSize: "1.4rem", fontWeight: 800, fontFamily: "var(--font-mono)", marginBottom: "0.2rem" }}>
+                {allReviews.filter((r: any) => r.rating === "5.0").length}x 5.0 ★
               </div>
               <div className="t-label" style={{ opacity: 0.5, color: "var(--paper)", fontSize: "0.62rem" }}>
-                Completed Contracts &amp; Deliverables
+                Top 5-Star Rated Projects
               </div>
             </div>
 
@@ -864,11 +929,11 @@ export default function About() {
             </div>
 
             <div style={{ background: "rgba(239,235,227,0.03)", border: "1px solid rgba(239,235,227,0.08)", borderRadius: "4px", padding: "1.2rem" }}>
-              <div style={{ color: "#70b5f9", fontSize: "1.4rem", fontWeight: 800, fontFamily: "var(--font-mono)", marginBottom: "0.2rem" }}>
+              <div style={{ color: "#5cdb5c", fontSize: "1.4rem", fontWeight: 800, fontFamily: "var(--font-mono)", marginBottom: "0.2rem" }}>
                 Top Rated
               </div>
               <div className="t-label" style={{ opacity: 0.5, color: "var(--paper)", fontSize: "0.62rem" }}>
-                Upwork Verified Talent
+                Upwork Verified Profile
               </div>
             </div>
           </div>
@@ -913,6 +978,46 @@ export default function About() {
             ))}
           </div>
 
+          {/* Interactive Filter Pills */}
+          <div
+            style={{
+              display: "flex",
+              gap: "0.5rem",
+              flexWrap: "wrap",
+              marginBottom: "1.75rem",
+              alignItems: "center",
+            }}
+          >
+            {[
+              { id: "all", label: `All 11+ Real Contracts (${allReviews.length})` },
+              { id: "5star", label: `5.0 ★ Rated (${allReviews.filter((r: any) => r.rating === "5.0").length})` },
+              { id: "reviews", label: `Client Quotes (${allReviews.filter((r: any) => r.rating !== null && r.quote && r.quote.length > 5).length})` },
+              { id: "logo", label: `Logo & Branding (${allReviews.filter((r: any) => r.category === "logo" || r.category === "branding").length})` },
+              { id: "youtube", label: `YouTube & Media (${allReviews.filter((r: any) => r.category === "youtube" || r.category === "graphics").length})` },
+            ].map((f) => (
+              <button
+                key={f.id}
+                type="button"
+                onClick={() => setReviewFilter(f.id as any)}
+                style={{
+                  padding: "0.35rem 0.85rem",
+                  background: reviewFilter === f.id ? "var(--vermilion)" : "rgba(239,235,227,0.04)",
+                  border: `1px solid ${reviewFilter === f.id ? "var(--vermilion)" : "rgba(239,235,227,0.12)"}`,
+                  borderRadius: "999px",
+                  color: reviewFilter === f.id ? "#fff" : "rgba(239,235,227,0.75)",
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "0.62rem",
+                  fontWeight: reviewFilter === f.id ? 700 : 500,
+                  letterSpacing: "0.04em",
+                  cursor: "pointer",
+                  transition: "all 0.2s",
+                }}
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
+
           {/* Review Cards Grid */}
           <div
             style={{
@@ -922,7 +1027,7 @@ export default function About() {
               marginBottom: "2rem",
             }}
           >
-            {SITE.testimonials.map((review) => (
+            {filteredReviews.map((review: any) => (
               <div
                 key={review.id}
                 style={{
@@ -952,10 +1057,54 @@ export default function About() {
                 <div>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.75rem" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
-                      <span style={{ color: "#FFD700", fontSize: "1rem", letterSpacing: "0.1em" }}>{review.stars}</span>
-                      <span className="t-label" style={{ color: "#FFD700", fontWeight: 700, fontSize: "0.7rem", marginLeft: "0.2rem" }}>
-                        {review.rating}
-                      </span>
+                      {review.rating ? (
+                        <>
+                          <span
+                            style={{
+                              color:
+                                Number(review.rating) >= 4.5
+                                  ? "#FFD700"
+                                  : Number(review.rating) >= 3.0
+                                  ? "#f59e0b"
+                                  : "#fb7185",
+                              fontSize: "1rem",
+                              letterSpacing: "0.1em",
+                            }}
+                          >
+                            {review.stars || "★★★★★"}
+                          </span>
+                          <span
+                            className="t-label"
+                            style={{
+                              color:
+                                Number(review.rating) >= 4.5
+                                  ? "#FFD700"
+                                  : Number(review.rating) >= 3.0
+                                  ? "#f59e0b"
+                                  : "#fb7185",
+                              fontWeight: 700,
+                              fontSize: "0.7rem",
+                              marginLeft: "0.2rem",
+                            }}
+                          >
+                            {review.rating} / 5.0
+                          </span>
+                        </>
+                      ) : (
+                        <span
+                          className="t-label"
+                          style={{
+                            padding: "0.2rem 0.5rem",
+                            background: "rgba(239,235,227,0.08)",
+                            color: "var(--paper)",
+                            borderRadius: "2px",
+                            fontSize: "0.58rem",
+                            fontWeight: 700,
+                          }}
+                        >
+                          ✓ COMPLETED CONTRACT
+                        </span>
+                      )}
                     </div>
                     <span
                       className="t-label"
@@ -972,37 +1121,60 @@ export default function About() {
                     </span>
                   </div>
 
-                  <p
-                    style={{
-                      fontFamily: "var(--font-serif)",
-                      fontStyle: "italic",
-                      fontSize: "clamp(1.05rem, 1.6vw, 1.35rem)",
-                      color: "var(--paper)",
-                      lineHeight: 1.45,
-                      marginBottom: "1rem",
-                    }}
-                  >
-                    &ldquo;{review.quote}&rdquo;
-                  </p>
+                  {review.quote && (
+                    <p
+                      style={{
+                        fontFamily: "var(--font-serif)",
+                        fontStyle: "italic",
+                        fontSize: "clamp(1.05rem, 1.6vw, 1.35rem)",
+                        color: "var(--paper)",
+                        lineHeight: 1.45,
+                        marginBottom: "1rem",
+                      }}
+                    >
+                      &ldquo;{review.quote}&rdquo;
+                    </p>
+                  )}
+
+                  {review.response && (
+                    <div
+                      style={{
+                        margin: "0.75rem 0",
+                        padding: "0.6rem 0.85rem",
+                        background: "rgba(255, 74, 28, 0.06)",
+                        borderLeft: "2px solid var(--vermilion)",
+                        borderRadius: "2px",
+                      }}
+                    >
+                      <div className="t-label" style={{ color: "var(--vermilion)", fontSize: "0.55rem", fontWeight: 700, marginBottom: "0.2rem" }}>
+                        YEABSIRA&apos;S RESPONSE:
+                      </div>
+                      <p style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: "0.78rem", color: "rgba(239,235,227,0.85)", margin: 0, lineHeight: 1.4 }}>
+                        &ldquo;{review.response}&rdquo;
+                      </p>
+                    </div>
+                  )}
 
                   <h4
                     style={{
                       fontFamily: "var(--font-display)",
                       fontWeight: 700,
-                      fontSize: "0.92rem",
+                      fontSize: "0.95rem",
                       color: "var(--paper)",
                       marginBottom: "0.25rem",
                     }}
                   >
-                    {review.project}
+                    {review.project || review.title}
                   </h4>
                   <div className="t-label" style={{ opacity: 0.5, color: "var(--paper)", fontSize: "0.6rem", marginBottom: "0.75rem" }}>
                     {review.client} · {review.date} · {review.type}
                   </div>
 
-                  <p style={{ fontFamily: "var(--font-display)", fontSize: "0.8rem", color: "rgba(239,235,227,0.65)", lineHeight: 1.5 }}>
-                    {review.highlight}
-                  </p>
+                  {review.highlight && (
+                    <p style={{ fontFamily: "var(--font-display)", fontSize: "0.8rem", color: "rgba(239,235,227,0.65)", lineHeight: 1.5 }}>
+                      {review.highlight}
+                    </p>
+                  )}
                 </div>
 
                 <div
@@ -1028,7 +1200,7 @@ export default function About() {
                     }}
                   >
                     <span>✓</span>
-                    <span>{review.endorsement}</span>
+                    <span>{review.endorsement || "Verified Upwork Outcome"}</span>
                   </span>
                   <a
                     href={SITE.upwork}

@@ -50,6 +50,8 @@ export interface CmsOverrides {
   customProjects?: ProjectItem[];
   hiddenCerts?: string[];
   customCerts?: CertItem[];
+  hiddenReviews?: string[];
+  customReviews?: any[];
   effects?: EffectsState;
 }
 
@@ -81,6 +83,9 @@ interface CmsActions {
   toggleCertVisibility: (title: string) => void;
   addCustomCert: (cert: CertItem) => void;
   removeCustomCert: (title: string) => void;
+  toggleReviewVisibility: (id: string) => void;
+  addCustomReview: (review: any) => void;
+  removeCustomReview: (id: string) => void;
   setEffect: <K extends keyof EffectsState>(key: K, value: EffectsState[K]) => void;
   resetAll: () => void;
   exportOverrides: () => string;
@@ -102,6 +107,8 @@ const emptyOverrides: CmsOverrides = {
   customProjects: [],
   hiddenCerts: [],
   customCerts: [],
+  hiddenReviews: [],
+  customReviews: [],
   effects: {
     yMaterial: "obsidian",
     ySpeed: 1.0,
@@ -328,6 +335,48 @@ export function CmsProvider({ children }: { children: ReactNode }) {
     [persistOverrides, showToast]
   );
 
+  // ── Upwork Reviews & Contracts ───────────────────────────
+  const toggleReviewVisibility = useCallback(
+    (id: string) => {
+      setOverrides((prev) => {
+        const current = prev.hiddenReviews || [];
+        const nextHidden = current.includes(id)
+          ? current.filter((rId) => rId !== id)
+          : [...current, id];
+        const next = { ...prev, hiddenReviews: nextHidden };
+        persistOverrides(next);
+        return next;
+      });
+    },
+    [persistOverrides]
+  );
+
+  const addCustomReview = useCallback(
+    (review: any) => {
+      setOverrides((prev) => {
+        const current = prev.customReviews || [];
+        const next = { ...prev, customReviews: [review, ...current] };
+        persistOverrides(next);
+        return next;
+      });
+      showToast(`✓ Upwork Contract "${review.title || review.project}" added!`);
+    },
+    [persistOverrides, showToast]
+  );
+
+  const removeCustomReview = useCallback(
+    (id: string) => {
+      setOverrides((prev) => {
+        const current = prev.customReviews || [];
+        const next = { ...prev, customReviews: current.filter((r) => r.id !== id) };
+        persistOverrides(next);
+        return next;
+      });
+      showToast("Contract removed.");
+    },
+    [persistOverrides, showToast]
+  );
+
   // ── 3D & FX ─────────────────────────────────────────────
   const setEffect = useCallback(
     <K extends keyof EffectsState>(key: K, value: EffectsState[K]) => {
@@ -423,6 +472,9 @@ export function CmsProvider({ children }: { children: ReactNode }) {
         toggleCertVisibility,
         addCustomCert,
         removeCustomCert,
+        toggleReviewVisibility,
+        addCustomReview,
+        removeCustomReview,
         setEffect,
         resetAll,
         exportOverrides,

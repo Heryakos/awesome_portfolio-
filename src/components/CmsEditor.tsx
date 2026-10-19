@@ -82,7 +82,7 @@ const THEME_PRESETS = [
   },
 ];
 
-type Tab = "colors" | "text" | "projects" | "certs" | "effects" | "export";
+type Tab = "colors" | "text" | "projects" | "certs" | "reviews" | "effects" | "export";
 
 export default function CmsEditor() {
   const cms = useCms();
@@ -116,6 +116,21 @@ export default function CmsEditor() {
     credentialUrl: "",
   });
   const [showAddCert, setShowAddCert] = useState(false);
+
+  // New Upwork Review Form state
+  const [newReview, setNewReview] = useState({
+    title: "",
+    client: "",
+    quote: "",
+    response: "",
+    rating: "5.0",
+    date: "October 2026",
+    type: "Fixed Price ($50.00)",
+    category: "logo",
+    endorsement: "Committed to Quality",
+    highlight: "",
+  });
+  const [showAddReview, setShowAddReview] = useState(false);
 
   const [isMobile, setIsMobile] = useState(false);
 
@@ -222,6 +237,58 @@ export default function CmsEditor() {
     setShowAddCert(false);
   };
 
+  const handleAddReviewSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newReview.title.trim()) return;
+    const id = `custom-review-${Date.now()}`;
+    const stars =
+      newReview.rating === "5.0"
+        ? "★★★★★"
+        : newReview.rating === "4.0"
+        ? "★★★★☆"
+        : newReview.rating === "3.0"
+        ? "★★★☆☆"
+        : newReview.rating === "2.0"
+        ? "★★☆☆☆"
+        : newReview.rating === "1.0"
+        ? "★☆☆☆☆"
+        : newReview.rating
+        ? `${newReview.rating} ★`
+        : "Completed";
+
+    const item = {
+      id,
+      title: newReview.title,
+      client: newReview.client || "Upwork Verified Client",
+      project: newReview.title,
+      quote: newReview.quote || "Work completed successfully.",
+      response: newReview.response?.trim() ? newReview.response.trim() : undefined,
+      rating: newReview.rating === "none" ? null : newReview.rating,
+      stars: newReview.rating === "none" ? "Completed" : stars,
+      date: newReview.date || "Recent",
+      type: newReview.type || "Fixed Price",
+      category: newReview.category || "logo",
+      verified: true,
+      platform: "Upwork Verified Contract",
+      endorsement: newReview.endorsement || "Committed to Quality",
+      highlight: newReview.highlight || "Delivered per client requirements.",
+    };
+    cms.addCustomReview(item);
+    setNewReview({
+      title: "",
+      client: "",
+      quote: "",
+      response: "",
+      rating: "5.0",
+      date: "October 2026",
+      type: "Fixed Price ($50.00)",
+      category: "logo",
+      endorsement: "Committed to Quality",
+      highlight: "",
+    });
+    setShowAddReview(false);
+  };
+
   if (!cms.isAuth || !cms.editorOpen) return null;
 
   const tabs: { id: Tab; label: string; icon: string }[] = [
@@ -229,6 +296,7 @@ export default function CmsEditor() {
     { id: "text", label: "Copy", icon: "✏️" },
     { id: "projects", label: "Works", icon: "💼" },
     { id: "certs", label: "Certs", icon: "🏆" },
+    { id: "reviews", label: "Upwork", icon: "⭐" },
     { id: "effects", label: "3D FX", icon: "🔮" },
     { id: "export", label: "Export", icon: "💾" },
   ];
@@ -240,6 +308,10 @@ export default function CmsEditor() {
   const hiddenCerts = cms.overrides.hiddenCerts || [];
   const customCerts = cms.overrides.customCerts || [];
   const allCerts = [...customCerts, ...SITE.certifications];
+
+  const hiddenReviews = (cms.overrides as any).hiddenReviews || [];
+  const customReviews = (cms.overrides as any).customReviews || [];
+  const allReviews = [...customReviews, ...SITE.testimonials];
 
   const yMaterial = cms.overrides.effects?.yMaterial || "obsidian";
   const ySpeed = cms.overrides.effects?.ySpeed ?? 1.0;
@@ -1174,6 +1246,343 @@ export default function CmsEditor() {
                           checked={!isHidden}
                           onChange={() => cms.toggleCertVisibility(c.title)}
                           style={{ accentColor: "#FF4A1C", cursor: "pointer" }}
+                        />
+                        <span>{isHidden ? "Hidden" : "Visible"}</span>
+                      </label>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* ── UPWORK REVIEWS & CONTRACTS TAB ── */}
+        {activeTab === "reviews" && (
+          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div>
+                <span
+                  style={{
+                    fontSize: "0.64rem",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.08em",
+                    color: "#888",
+                    fontWeight: 700,
+                  }}
+                >
+                  Upwork Contracts ({allReviews.length})
+                </span>
+                <span style={{ fontSize: "0.58rem", color: "#666", display: "block" }}>
+                  Real-time sync to portfolio
+                </span>
+              </div>
+              <button
+                onClick={() => setShowAddReview(!showAddReview)}
+                style={{
+                  padding: "4px 8px",
+                  background: "linear-gradient(135deg, #14a800, #22c55e)",
+                  border: "none",
+                  borderRadius: 6,
+                  color: "#fff",
+                  fontSize: "0.64rem",
+                  fontWeight: 700,
+                  cursor: "pointer",
+                }}
+              >
+                {showAddReview ? "✕ Cancel" : "+ Add Upwork Job"}
+              </button>
+            </div>
+
+            {/* Add Upwork Review Form */}
+            {showAddReview && (
+              <form
+                onSubmit={handleAddReviewSubmit}
+                style={{
+                  padding: 12,
+                  background: "rgba(20, 168, 0, 0.08)",
+                  border: "1px solid rgba(20, 168, 0, 0.3)",
+                  borderRadius: 10,
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 8,
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                  <span style={{ fontSize: "0.9rem" }}>⭐</span>
+                  <span style={{ fontWeight: 700, color: "#5cdb5c", fontSize: "0.7rem" }}>
+                    Add Real Upwork Completed Contract
+                  </span>
+                </div>
+
+                <input
+                  type="text"
+                  placeholder="Contract / Job Title (e.g. Modern Minimalist Logo Design)"
+                  value={newReview.title}
+                  onChange={(e) => setNewReview({ ...newReview, title: e.target.value })}
+                  required
+                  style={{
+                    padding: "6px 8px",
+                    background: "rgba(0,0,0,0.5)",
+                    border: "1px solid rgba(255,255,255,0.1)",
+                    borderRadius: 6,
+                    color: "#fff",
+                    fontSize: "0.68rem",
+                  }}
+                />
+
+                <input
+                  type="text"
+                  placeholder="Client or Industry (e.g. Tech Startup / Susi / US Creator)"
+                  value={newReview.client}
+                  onChange={(e) => setNewReview({ ...newReview, client: e.target.value })}
+                  style={{
+                    padding: "6px 8px",
+                    background: "rgba(0,0,0,0.5)",
+                    border: "1px solid rgba(255,255,255,0.1)",
+                    borderRadius: 6,
+                    color: "#fff",
+                    fontSize: "0.68rem",
+                  }}
+                />
+
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
+                  <div>
+                    <label style={{ fontSize: "0.58rem", color: "#888", display: "block", marginBottom: 2 }}>
+                      Rating
+                    </label>
+                    <select
+                      value={newReview.rating}
+                      onChange={(e) => setNewReview({ ...newReview, rating: e.target.value })}
+                      style={{
+                        width: "100%",
+                        padding: "6px",
+                        background: "rgba(0,0,0,0.5)",
+                        border: "1px solid rgba(255,255,255,0.1)",
+                        borderRadius: 6,
+                        color: "#fff",
+                        fontSize: "0.66rem",
+                      }}
+                    >
+                      <option value="5.0">★★★★★ 5.0 Star</option>
+                      <option value="4.0">★★★★☆ 4.0 Star</option>
+                      <option value="3.0">★★★☆☆ 3.0 Star</option>
+                      <option value="2.0">★★☆☆☆ 2.0 Star</option>
+                      <option value="1.0">★☆☆☆☆ 1.0 Star</option>
+                      <option value="none">Completed (No Rating)</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label style={{ fontSize: "0.58rem", color: "#888", display: "block", marginBottom: 2 }}>
+                      Category
+                    </label>
+                    <select
+                      value={newReview.category}
+                      onChange={(e) => setNewReview({ ...newReview, category: e.target.value })}
+                      style={{
+                        width: "100%",
+                        padding: "6px",
+                        background: "rgba(0,0,0,0.5)",
+                        border: "1px solid rgba(255,255,255,0.1)",
+                        borderRadius: 6,
+                        color: "#fff",
+                        fontSize: "0.66rem",
+                      }}
+                    >
+                      <option value="logo">Logo Design</option>
+                      <option value="branding">Brand Identity</option>
+                      <option value="youtube">YouTube Thumbnail</option>
+                      <option value="graphics">Graphic / Packaging</option>
+                    </select>
+                  </div>
+                </div>
+
+                <textarea
+                  placeholder="Client Review Quote (e.g. 'Yeabsira delivered exceptional work quickly and followed all instructions perfectly.')"
+                  value={newReview.quote}
+                  onChange={(e) => setNewReview({ ...newReview, quote: e.target.value })}
+                  rows={2}
+                  style={{
+                    padding: "6px 8px",
+                    background: "rgba(0,0,0,0.5)",
+                    border: "1px solid rgba(255,255,255,0.1)",
+                    borderRadius: 6,
+                    color: "#fff",
+                    fontSize: "0.68rem",
+                    resize: "vertical",
+                  }}
+                />
+
+                <textarea
+                  placeholder="Freelancer Response (optional - e.g. 'Thank you! It was great working with you.')"
+                  value={newReview.response}
+                  onChange={(e) => setNewReview({ ...newReview, response: e.target.value })}
+                  rows={2}
+                  style={{
+                    padding: "6px 8px",
+                    background: "rgba(0,0,0,0.5)",
+                    border: "1px solid rgba(255,255,255,0.1)",
+                    borderRadius: 6,
+                    color: "#fff",
+                    fontSize: "0.68rem",
+                    resize: "vertical",
+                  }}
+                />
+
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
+                  <input
+                    type="text"
+                    placeholder="Rate / Total (e.g. Fixed Price ($70.00))"
+                    value={newReview.type}
+                    onChange={(e) => setNewReview({ ...newReview, type: e.target.value })}
+                    style={{
+                      padding: "6px 8px",
+                      background: "rgba(0,0,0,0.5)",
+                      border: "1px solid rgba(255,255,255,0.1)",
+                      borderRadius: 6,
+                      color: "#fff",
+                      fontSize: "0.68rem",
+                    }}
+                  />
+                  <input
+                    type="text"
+                    placeholder="Dates (e.g. Oct 2026 – Present)"
+                    value={newReview.date}
+                    onChange={(e) => setNewReview({ ...newReview, date: e.target.value })}
+                    style={{
+                      padding: "6px 8px",
+                      background: "rgba(0,0,0,0.5)",
+                      border: "1px solid rgba(255,255,255,0.1)",
+                      borderRadius: 6,
+                      color: "#fff",
+                      fontSize: "0.68rem",
+                    }}
+                  />
+                </div>
+
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
+                  <div>
+                    <label style={{ fontSize: "0.58rem", color: "#888", display: "block", marginBottom: 2 }}>
+                      Endorsement Strength
+                    </label>
+                    <select
+                      value={newReview.endorsement}
+                      onChange={(e) => setNewReview({ ...newReview, endorsement: e.target.value })}
+                      style={{
+                        width: "100%",
+                        padding: "6px",
+                        background: "rgba(0,0,0,0.5)",
+                        border: "1px solid rgba(255,255,255,0.1)",
+                        borderRadius: 6,
+                        color: "#fff",
+                        fontSize: "0.66rem",
+                      }}
+                    >
+                      <option value="Committed to Quality">💎 Committed to Quality</option>
+                      <option value="Accountable for Outcomes">🎯 Accountable for Outcomes</option>
+                      <option value="Solution Oriented">💡 Solution Oriented</option>
+                      <option value="Professional Execution">✨ Professional Execution</option>
+                      <option value="Fast Turnaround">⚡ Fast Turnaround</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label style={{ fontSize: "0.58rem", color: "#888", display: "block", marginBottom: 2 }}>
+                      Deliverables Highlight
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Vector logo suite"
+                      value={newReview.highlight}
+                      onChange={(e) => setNewReview({ ...newReview, highlight: e.target.value })}
+                      style={{
+                        width: "100%",
+                        padding: "6px 8px",
+                        background: "rgba(0,0,0,0.5)",
+                        border: "1px solid rgba(255,255,255,0.1)",
+                        borderRadius: 6,
+                        color: "#fff",
+                        fontSize: "0.68rem",
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  style={{
+                    padding: "8px",
+                    background: "linear-gradient(135deg, #14a800, #22c55e)",
+                    border: "none",
+                    borderRadius: 6,
+                    color: "#fff",
+                    fontWeight: 700,
+                    fontSize: "0.7rem",
+                    cursor: "pointer",
+                  }}
+                >
+                  ✓ Publish Real-Time to Portfolio
+                </button>
+              </form>
+            )}
+
+            {/* Upwork Reviews List */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              {allReviews.map((r: any) => {
+                const isHidden = hiddenReviews.includes(r.id);
+                const isCustom = customReviews.some((cr: any) => cr.id === r.id);
+                return (
+                  <div
+                    key={r.id}
+                    style={{
+                      padding: "8px 10px",
+                      background: isHidden
+                        ? "rgba(255, 255, 255, 0.01)"
+                        : "rgba(255, 255, 255, 0.03)",
+                      borderRadius: 8,
+                      border: "1px solid rgba(255, 255, 255, 0.05)",
+                      opacity: isHidden ? 0.45 : 1,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <div style={{ overflow: "hidden", textOverflow: "ellipsis", maxWidth: "68%" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                        <span style={{ color: r.rating ? "#FFD700" : "#888", fontSize: "0.65rem", fontWeight: 700 }}>
+                          {r.rating ? `${r.rating} ★` : "Completed"}
+                        </span>
+                        <span style={{ fontWeight: 600, color: "#fff", fontSize: "0.66rem", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                          {r.title || r.project}
+                        </span>
+                      </div>
+                      <div style={{ color: "#777", fontSize: "0.58rem" }}>
+                        {r.type} · {r.date}
+                      </div>
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      {isCustom && (
+                        <button
+                          onClick={() => cms.removeCustomReview(r.id)}
+                          title="Delete custom review"
+                          style={{
+                            background: "none",
+                            border: "none",
+                            color: "#ff6b6b",
+                            cursor: "pointer",
+                            fontSize: "0.75rem",
+                          }}
+                        >
+                          🗑️
+                        </button>
+                      )}
+                      <label style={{ display: "flex", alignItems: "center", gap: 4, cursor: "pointer", fontSize: "0.62rem" }}>
+                        <input
+                          type="checkbox"
+                          checked={!isHidden}
+                          onChange={() => cms.toggleReviewVisibility(r.id)}
+                          style={{ accentColor: "#14a800", cursor: "pointer" }}
                         />
                         <span>{isHidden ? "Hidden" : "Visible"}</span>
                       </label>
