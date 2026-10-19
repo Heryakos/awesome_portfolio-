@@ -114,7 +114,7 @@ export default function Contact() {
       )}
 
       <div className="t-label" style={{ opacity: 0.35, marginBottom: "3rem", color: "var(--paper)" }}>
-        06 — Contact &amp; Connect
+        07 — Contact &amp; Connect
       </div>
 
       {/* Main CTA headline */}

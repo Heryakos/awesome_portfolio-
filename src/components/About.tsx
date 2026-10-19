@@ -732,40 +732,394 @@ export default function About() {
           ))}
         </div>
 
-        {/* Upwork Verified Review Card */}
-        <div style={{
-          background: "rgba(255,74,28,0.06)",
-          border: "1px solid rgba(255,74,28,0.25)",
-          borderRadius: "4px",
-          padding: "clamp(1.5rem, 3vh, 2.5rem)",
-          display: "flex",
-          flexDirection: "column",
-          gap: "1rem",
-        }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "0.5rem" }}>
-            <span className="t-label" style={{ color: "var(--vermilion)", fontWeight: 700 }}>
-              ★ 5.0 CLIENT FEEDBACK — UPWORK VERIFIED
-            </span>
-            <span className="t-label" style={{ opacity: 0.4, color: "var(--paper)" }}>
-              Fixed Price Project
-            </span>
+        {/* ── 04 — Upwork Verified Client Reviews & Reputation ── */}
+        <div
+          id="reviews"
+          style={{
+            marginTop: "clamp(3.5rem, 7vh, 5.5rem)",
+            paddingTop: "clamp(2rem, 4vh, 3.5rem)",
+            borderTop: "1px solid rgba(239,235,227,0.1)",
+          }}
+        >
+          {/* Header */}
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "flex-end",
+              flexWrap: "wrap",
+              gap: "1.25rem",
+              marginBottom: "clamp(2rem, 4vh, 3rem)",
+            }}
+          >
+            <div>
+              <div className="t-label" style={{ opacity: 0.35, marginBottom: "0.5rem", color: "var(--paper)" }}>
+                04 — Client Reviews &amp; Upwork Track Record
+              </div>
+              <h3
+                style={{
+                  fontFamily: "var(--font-display)",
+                  fontWeight: 700,
+                  fontSize: "clamp(1.6rem, 3.2vw, 2.9rem)",
+                  color: "var(--paper)",
+                  letterSpacing: "-0.02em",
+                  marginBottom: "0.4rem",
+                }}
+              >
+                5.0 ★ Client Feedback &amp; Verified Work
+              </h3>
+              <p style={{ color: "rgba(239,235,227,0.65)", fontSize: "0.88rem", maxWidth: "48ch" }}>
+                Proven results delivered for founders, international creators, and enterprise clients across logo design, packaging, and digital media.
+              </p>
+            </div>
+
+            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap" }}>
+              <span
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "0.4rem",
+                  padding: "0.35rem 0.8rem",
+                  background: "rgba(20, 168, 0, 0.15)",
+                  border: "1px solid rgba(20, 168, 0, 0.4)",
+                  borderRadius: "999px",
+                  color: "#5cdb5c",
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "0.65rem",
+                  fontWeight: 700,
+                  letterSpacing: "0.06em",
+                }}
+              >
+                <span>✓</span>
+                <span>TOP RATED ON UPWORK</span>
+              </span>
+
+              <a
+                href={SITE.upwork}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "0.35rem",
+                  padding: "0.45rem 1rem",
+                  background: "rgba(255, 74, 28, 0.12)",
+                  border: "1px solid var(--vermilion)",
+                  borderRadius: "4px",
+                  color: "var(--paper)",
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "0.68rem",
+                  fontWeight: 700,
+                  textDecoration: "none",
+                  transition: "background 0.2s, transform 0.2s",
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLElement).style.background = "var(--vermilion)";
+                  (e.currentTarget as HTMLElement).style.transform = "translateY(-2px)";
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLElement).style.background = "rgba(255, 74, 28, 0.12)";
+                  (e.currentTarget as HTMLElement).style.transform = "translateY(0)";
+                }}
+              >
+                <span>Verify on Upwork ↗</span>
+              </a>
+            </div>
           </div>
-          <p style={{
-            fontFamily: "var(--font-serif)",
-            fontStyle: "italic",
-            fontSize: "clamp(1.1rem, 2vw, 1.6rem)",
-            color: "var(--paper)",
-            lineHeight: 1.4,
-          }}>
-            &ldquo;{SITE.testimonial.quote}&rdquo;
-          </p>
-          <div className="t-label" style={{ opacity: 0.5, color: "var(--paper)" }}>
-            {SITE.testimonial.source} · {SITE.testimonial.rating}
+
+          {/* Reputation Stats & Badges Bar */}
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+              gap: "1rem",
+              marginBottom: "2rem",
+            }}
+          >
+            <div style={{ background: "rgba(239,235,227,0.03)", border: "1px solid rgba(239,235,227,0.08)", borderRadius: "4px", padding: "1.2rem" }}>
+              <div style={{ color: "#FFD700", fontSize: "1.4rem", fontWeight: 800, fontFamily: "var(--font-mono)", marginBottom: "0.2rem" }}>
+                5.0 ★
+              </div>
+              <div className="t-label" style={{ opacity: 0.5, color: "var(--paper)", fontSize: "0.62rem" }}>
+                100% 5-Star Client Rating
+              </div>
+            </div>
+
+            <div style={{ background: "rgba(239,235,227,0.03)", border: "1px solid rgba(239,235,227,0.08)", borderRadius: "4px", padding: "1.2rem" }}>
+              <div style={{ color: "var(--paper)", fontSize: "1.4rem", fontWeight: 800, fontFamily: "var(--font-mono)", marginBottom: "0.2rem" }}>
+                11+ Jobs
+              </div>
+              <div className="t-label" style={{ opacity: 0.5, color: "var(--paper)", fontSize: "0.62rem" }}>
+                Completed Contracts &amp; Deliverables
+              </div>
+            </div>
+
+            <div style={{ background: "rgba(239,235,227,0.03)", border: "1px solid rgba(239,235,227,0.08)", borderRadius: "4px", padding: "1.2rem" }}>
+              <div style={{ color: "var(--vermilion)", fontSize: "1.4rem", fontWeight: 800, fontFamily: "var(--font-mono)", marginBottom: "0.2rem" }}>
+                100%
+              </div>
+              <div className="t-label" style={{ opacity: 0.5, color: "var(--paper)", fontSize: "0.62rem" }}>
+                On-Time Project Delivery
+              </div>
+            </div>
+
+            <div style={{ background: "rgba(239,235,227,0.03)", border: "1px solid rgba(239,235,227,0.08)", borderRadius: "4px", padding: "1.2rem" }}>
+              <div style={{ color: "#70b5f9", fontSize: "1.4rem", fontWeight: 800, fontFamily: "var(--font-mono)", marginBottom: "0.2rem" }}>
+                Top Rated
+              </div>
+              <div className="t-label" style={{ opacity: 0.5, color: "var(--paper)", fontSize: "0.62rem" }}>
+                Upwork Verified Talent
+              </div>
+            </div>
+          </div>
+
+          {/* Client-voted Strengths & Endorsements */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "0.6rem",
+              flexWrap: "wrap",
+              marginBottom: "2rem",
+              padding: "0.85rem 1.25rem",
+              background: "rgba(255, 74, 28, 0.04)",
+              border: "1px solid rgba(255, 74, 28, 0.15)",
+              borderRadius: "4px",
+            }}
+          >
+            <span className="t-label" style={{ color: "var(--vermilion)", fontWeight: 700, fontSize: "0.65rem", marginRight: "0.4rem" }}>
+              CLIENT-VOTED STRENGTHS:
+            </span>
+            {SITE.upworkStats.endorsements.map((end) => (
+              <span
+                key={end.label}
+                className="t-label"
+                style={{
+                  padding: "0.25rem 0.6rem",
+                  background: "rgba(239,235,227,0.05)",
+                  border: "1px solid rgba(239,235,227,0.12)",
+                  borderRadius: "999px",
+                  fontSize: "0.58rem",
+                  color: "var(--paper)",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "0.3rem",
+                }}
+              >
+                <span>{end.icon}</span>
+                <span>{end.label}</span>
+                <span style={{ color: "var(--vermilion)", fontWeight: 700 }}>({end.count})</span>
+              </span>
+            ))}
+          </div>
+
+          {/* Review Cards Grid */}
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+              gap: "1.5rem",
+              marginBottom: "2rem",
+            }}
+          >
+            {SITE.testimonials.map((review) => (
+              <div
+                key={review.id}
+                style={{
+                  background: "rgba(239,235,227,0.03)",
+                  border: "1px solid rgba(239,235,227,0.1)",
+                  borderRadius: "6px",
+                  padding: "clamp(1.4rem, 2.5vw, 2rem)",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
+                  gap: "1.25rem",
+                  transition: "transform 0.25s, border-color 0.25s, background 0.25s",
+                }}
+                onMouseEnter={(e) => {
+                  const el = e.currentTarget as HTMLElement;
+                  el.style.transform = "translateY(-4px)";
+                  el.style.borderColor = "var(--vermilion)";
+                  el.style.background = "rgba(255, 74, 28, 0.04)";
+                }}
+                onMouseLeave={(e) => {
+                  const el = e.currentTarget as HTMLElement;
+                  el.style.transform = "translateY(0)";
+                  el.style.borderColor = "rgba(239,235,227,0.1)";
+                  el.style.background = "rgba(239,235,227,0.03)";
+                }}
+              >
+                <div>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.75rem" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
+                      <span style={{ color: "#FFD700", fontSize: "1rem", letterSpacing: "0.1em" }}>{review.stars}</span>
+                      <span className="t-label" style={{ color: "#FFD700", fontWeight: 700, fontSize: "0.7rem", marginLeft: "0.2rem" }}>
+                        {review.rating}
+                      </span>
+                    </div>
+                    <span
+                      className="t-label"
+                      style={{
+                        padding: "0.15rem 0.5rem",
+                        background: "rgba(20, 168, 0, 0.15)",
+                        color: "#5cdb5c",
+                        borderRadius: "2px",
+                        fontSize: "0.55rem",
+                        fontWeight: 700,
+                      }}
+                    >
+                      {review.platform}
+                    </span>
+                  </div>
+
+                  <p
+                    style={{
+                      fontFamily: "var(--font-serif)",
+                      fontStyle: "italic",
+                      fontSize: "clamp(1.05rem, 1.6vw, 1.35rem)",
+                      color: "var(--paper)",
+                      lineHeight: 1.45,
+                      marginBottom: "1rem",
+                    }}
+                  >
+                    &ldquo;{review.quote}&rdquo;
+                  </p>
+
+                  <h4
+                    style={{
+                      fontFamily: "var(--font-display)",
+                      fontWeight: 700,
+                      fontSize: "0.92rem",
+                      color: "var(--paper)",
+                      marginBottom: "0.25rem",
+                    }}
+                  >
+                    {review.project}
+                  </h4>
+                  <div className="t-label" style={{ opacity: 0.5, color: "var(--paper)", fontSize: "0.6rem", marginBottom: "0.75rem" }}>
+                    {review.client} · {review.date} · {review.type}
+                  </div>
+
+                  <p style={{ fontFamily: "var(--font-display)", fontSize: "0.8rem", color: "rgba(239,235,227,0.65)", lineHeight: 1.5 }}>
+                    {review.highlight}
+                  </p>
+                </div>
+
+                <div
+                  style={{
+                    borderTop: "1px solid rgba(239,235,227,0.08)",
+                    paddingTop: "0.75rem",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    flexWrap: "wrap",
+                    gap: "0.4rem",
+                  }}
+                >
+                  <span
+                    className="t-label"
+                    style={{
+                      color: "var(--vermilion)",
+                      fontSize: "0.58rem",
+                      fontWeight: 700,
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "0.25rem",
+                    }}
+                  >
+                    <span>✓</span>
+                    <span>{review.endorsement}</span>
+                  </span>
+                  <a
+                    href={SITE.upwork}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="t-label"
+                    style={{
+                      color: "rgba(239,235,227,0.5)",
+                      textDecoration: "none",
+                      fontSize: "0.58rem",
+                      transition: "color 0.2s",
+                    }}
+                    onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "var(--paper)"; }}
+                    onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "rgba(239,235,227,0.5)"; }}
+                  >
+                    Upwork Contract ↗
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Upwork Direct Escrow Hire Guarantee Box */}
+          <div
+            style={{
+              background: "linear-gradient(135deg, rgba(20, 168, 0, 0.08), rgba(255, 74, 28, 0.08))",
+              border: "1px solid rgba(20, 168, 0, 0.3)",
+              borderRadius: "6px",
+              padding: "clamp(1.25rem, 3vw, 2rem)",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              flexWrap: "wrap",
+              gap: "1.25rem",
+            }}
+          >
+            <div>
+              <div className="t-label" style={{ color: "#5cdb5c", fontWeight: 700, marginBottom: "0.3rem" }}>
+                ✓ UPWORK PAYMENT PROTECTION &amp; ESCROW ASSURANCE
+              </div>
+              <p
+                style={{
+                  fontFamily: "var(--font-display)",
+                  fontSize: "clamp(0.85rem, 1.3vw, 1.05rem)",
+                  color: "var(--paper)",
+                  lineHeight: 1.4,
+                  maxWidth: "52ch",
+                  margin: 0,
+                }}
+              >
+                Hire Yeabsira directly on Upwork with milestone-based payment security, verified contracts, and 100% intellectual property ownership transfer.
+              </p>
+            </div>
+
+            <a
+              href={SITE.upwork}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                fontFamily: "var(--font-mono)",
+                fontSize: "0.72rem",
+                fontWeight: 700,
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+                background: "#14a800",
+                color: "#fff",
+                padding: "0.75rem 1.6rem",
+                borderRadius: "4px",
+                textDecoration: "none",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.4rem",
+                boxShadow: "0 4px 16px rgba(20, 168, 0, 0.3)",
+                transition: "background 0.2s, transform 0.2s",
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLElement).style.background = "#18c700";
+                (e.currentTarget as HTMLElement).style.transform = "translateY(-2px)";
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.background = "#14a800";
+                (e.currentTarget as HTMLElement).style.transform = "translateY(0)";
+              }}
+            >
+              <span>Hire Yeabsira on Upwork ↗</span>
+            </a>
           </div>
         </div>
       </div>
 
-      {/* ── 04 — Career Journey & Professional Experience (LinkedIn + Upwork) ── */}
+      {/* ── 05 — Career Journey & Professional Experience (LinkedIn + Upwork) ── */}
       <div
         id="experience"
         style={{
@@ -784,7 +1138,7 @@ export default function About() {
         }}>
           <div>
             <div className="t-label" style={{ opacity: 0.35, marginBottom: "0.5rem", color: "var(--paper)" }}>
-              04 — Career Journey
+              05 — Career Journey
             </div>
             <h3 style={{
               fontFamily: "var(--font-display)",
