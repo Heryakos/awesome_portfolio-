@@ -77,9 +77,7 @@ export default function CmsToggle() {
       {/* Quick Logout button */}
       <button
         onClick={() => {
-          if (confirm("Log out from Design Studio?")) {
-            logout();
-          }
+          logout();
         }}
         title="Log out of Design Studio"
         aria-label="Log out of Design Studio"

@@ -357,23 +357,22 @@ export default function CmsEditor() {
           {/* Prominent Header Logout Button */}
           <button
             onClick={() => {
-              if (confirm("Log out of Design Studio?")) {
-                cms.logout();
-              }
+              cms.logout();
             }}
             title="Log out from Studio"
             style={{
-              padding: "4px 8px",
-              background: "rgba(220, 53, 69, 0.15)",
-              border: "1px solid rgba(220, 53, 69, 0.35)",
+              padding: "5px 10px",
+              background: "rgba(220, 53, 69, 0.18)",
+              border: "1px solid rgba(220, 53, 69, 0.4)",
               borderRadius: 6,
               color: "#ff6b6b",
-              fontSize: "0.64rem",
+              fontSize: "0.68rem",
               fontWeight: 700,
               cursor: "pointer",
               display: "flex",
               alignItems: "center",
               gap: 4,
+              touchAction: "manipulation",
             }}
           >
             <span>🔒</span>
@@ -1436,24 +1435,34 @@ export default function CmsEditor() {
           flexShrink: 0,
         }}
       >
-        <span style={{ color: "#666", fontSize: "0.6rem" }}>
-          Live in-browser persistence (localStorage)
+        <span style={{ color: "#777", fontSize: "0.62rem" }}>
+          Live persistence (localStorage)
         </span>
         <button
           onClick={() => {
-            if (confirm("Log out of Design Studio?")) cms.logout();
+            cms.logout();
           }}
+          title="Log out from Studio"
+          aria-label="Log out from Design Studio"
           style={{
-            background: "none",
-            border: "none",
+            background: "rgba(220, 53, 69, 0.18)",
+            border: "1px solid rgba(220, 53, 69, 0.4)",
+            borderRadius: 6,
             color: "#ff6b6b",
-            fontSize: "0.65rem",
+            fontSize: "0.72rem",
             cursor: "pointer",
             fontWeight: 700,
-            padding: 0,
+            padding: "6px 14px",
+            minHeight: 32,
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 5,
+            touchAction: "manipulation",
+            transition: "all 0.15s",
           }}
         >
-          🔒 Logout
+          <span>🔒</span>
+          <span>Logout</span>
         </button>
       </div>
     </div>

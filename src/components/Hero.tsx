@@ -66,6 +66,7 @@ export default function Hero() {
 
   return (
     <section
+      id="hero"
       className="hero"
       aria-label="Hero — Yeab Addis, Graphic Designer"
       style={{ position: "relative", minHeight: "100dvh", overflow: "hidden" }}

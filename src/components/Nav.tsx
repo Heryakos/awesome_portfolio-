@@ -64,6 +64,22 @@ export default function Nav() {
     };
   }, [menuOpen]);
 
+  const handleLogoClick = (e: React.MouseEvent) => {
+    setMenuOpen(false);
+    if (!isCaseStudy) {
+      e.preventDefault();
+      if ((window as any).__lenis) {
+        (window as any).__lenis.scrollTo(0, { immediate: false, duration: 1.2 });
+      } else {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+      const hero = document.getElementById("hero") || document.querySelector(".hero");
+      if (hero) {
+        hero.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  };
+
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     setMenuOpen(false);
     if (href.startsWith("/#") || href.startsWith("#")) {
@@ -120,14 +136,15 @@ export default function Nav() {
           <Link
             href="/"
             className="nav__logo"
-            aria-label="Yeab Addis home"
-            onClick={() => setMenuOpen(false)}
+            aria-label="Yeab Addis home — Scroll to top"
+            onClick={handleLogoClick}
             style={{
               color: menuOpen ? "#EFEBE3" : "var(--paper)",
               fontWeight: 800,
               fontSize: "1.05rem",
               letterSpacing: "0.06em",
               textDecoration: "none",
+              cursor: "pointer",
             }}
           >
             YEAB
