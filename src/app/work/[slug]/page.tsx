@@ -16,55 +16,7 @@ export default function CaseStudyPage({ params }: Props) {
   const [bg, fg, acc] = project.palette;
 
   return (
-    <main style={{ background: "var(--paper)", minHeight: "100dvh", color: "var(--ink)", paddingTop: "5rem" }}>
-
-      {/* ── Fixed Top Return Bar ── */}
-      <div
-        style={{
-          position: "fixed",
-          top: "1.5rem",
-          left: "clamp(1.5rem, 5vw, 4rem)",
-          zIndex: 1000,
-          display: "flex",
-          alignItems: "center",
-          gap: "1rem",
-        }}
-      >
-        <Link
-          href="/#work"
-          data-cursor="link"
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "0.5rem",
-            padding: "0.6rem 1.2rem",
-            background: "rgba(17, 17, 17, 0.85)",
-            backdropFilter: "blur(12px)",
-            border: "1px solid rgba(239, 235, 227, 0.25)",
-            borderRadius: "999px",
-            color: "var(--paper)",
-            textDecoration: "none",
-            fontSize: "0.78rem",
-            fontWeight: 600,
-            cursor: "pointer",
-            boxShadow: "0 6px 24px rgba(0,0,0,0.4)",
-            transition: "all 0.2s ease",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = "var(--vermilion)";
-            e.currentTarget.style.color = "#fff";
-            e.currentTarget.style.borderColor = "var(--vermilion)";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = "rgba(17, 17, 17, 0.85)";
-            e.currentTarget.style.color = "var(--paper)";
-            e.currentTarget.style.borderColor = "rgba(239, 235, 227, 0.25)";
-          }}
-        >
-          <span>←</span>
-          <span>Back to Portfolio</span>
-        </Link>
-      </div>
+    <main style={{ background: "var(--paper)", minHeight: "100dvh", color: "var(--ink)" }}>
       <section aria-label="Project overview" style={{
         minHeight: "100vh", background: fg, color: bg,
         display: "flex", flexDirection: "column", justifyContent: "flex-end",

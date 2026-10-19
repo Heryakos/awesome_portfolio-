@@ -112,44 +112,23 @@ export default function Nav() {
           transition: "opacity 0.25s ease, background 0.25s ease",
         }}
       >
-        {/* Logo / back */}
-        {isCaseStudy ? (
-          <Link
-            href="/#work"
-            className="nav__logo"
-            aria-label="Back to work"
-            style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
-          >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-              <path
-                d="M10 3L5 8L10 13"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                fill="none"
-              />
-            </svg>
-            YEAB
-          </Link>
-        ) : (
-          <Link
-            href="/"
-            className="nav__logo"
-            aria-label="Yeab Addis home — Scroll to top"
-            onClick={handleLogoClick}
-            style={{
-              color: menuOpen ? "#EFEBE3" : "var(--paper)",
-              fontWeight: 800,
-              fontSize: "1.05rem",
-              letterSpacing: "0.06em",
-              textDecoration: "none",
-              cursor: "pointer",
-            }}
-          >
-            YEAB
-          </Link>
-        )}
+        {/* Clean Logo — always navigates home */}
+        <Link
+          href="/"
+          className="nav__logo"
+          aria-label="Yeab Addis home — Scroll to top"
+          onClick={handleLogoClick}
+          style={{
+            color: menuOpen ? "#EFEBE3" : "var(--paper)",
+            fontWeight: 800,
+            fontSize: "1.05rem",
+            letterSpacing: "0.06em",
+            textDecoration: "none",
+            cursor: "pointer",
+          }}
+        >
+          YEAB
+        </Link>
 
         {/* Desktop links — hidden on case study */}
         {!isCaseStudy && (
@@ -191,15 +170,43 @@ export default function Nav() {
           </ul>
         )}
 
-        {/* On case study — show "Back to Work" label on desktop */}
+        {/* On case study — single clean "← All Projects" return button (desktop & mobile) */}
         {isCaseStudy && (
           <Link
             href="/#work"
-            className="nav__link"
-            style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}
+            className="nav__back-link"
             aria-label="Back to all projects"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.45rem",
+              padding: "0.45rem 0.95rem",
+              background: "rgba(239, 235, 227, 0.08)",
+              backdropFilter: "blur(8px)",
+              border: "1px solid rgba(239, 235, 227, 0.22)",
+              borderRadius: "999px",
+              color: "#EFEBE3",
+              textDecoration: "none",
+              fontFamily: "var(--font-mono)",
+              fontSize: "0.72rem",
+              fontWeight: 600,
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+              transition: "all 0.2s ease",
+            }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLElement).style.background = "var(--vermilion)";
+              (e.currentTarget as HTMLElement).style.borderColor = "var(--vermilion)";
+              (e.currentTarget as HTMLElement).style.color = "#fff";
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLElement).style.background = "rgba(239, 235, 227, 0.08)";
+              (e.currentTarget as HTMLElement).style.borderColor = "rgba(239, 235, 227, 0.22)";
+              (e.currentTarget as HTMLElement).style.color = "#EFEBE3";
+            }}
           >
-            All Projects
+            <span>←</span>
+            <span>All Projects</span>
           </Link>
         )}
 
@@ -230,26 +237,6 @@ export default function Nav() {
             <span>{menuOpen ? "✕" : "☰"}</span>
             <span>{menuOpen ? "CLOSE" : "MENU"}</span>
           </button>
-        )}
-
-        {/* Mobile back button on case study */}
-        {isCaseStudy && (
-          <Link
-            href="/#work"
-            className="nav__menu-btn t-label"
-            aria-label="Back to work"
-            style={{
-              display: "none",
-              background: "none",
-              border: "1px solid rgba(239,235,227,0.3)",
-              padding: "0.4rem 0.8rem",
-              borderRadius: "4px",
-              textDecoration: "none",
-              color: "#EFEBE3",
-            }}
-          >
-            ← Back
-          </Link>
         )}
       </nav>
 
