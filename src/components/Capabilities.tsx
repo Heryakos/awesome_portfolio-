@@ -100,7 +100,7 @@ export default function Capabilities() {
       >
         <div>
           <div className="t-label" style={{ opacity: 0.4, marginBottom: "0.5rem" }}>
-            03 — Capabilities {/* PLACEHOLDER: verify against profile */}
+            05 — Capabilities &amp; Disciplines
           </div>
           <h2
             style={{

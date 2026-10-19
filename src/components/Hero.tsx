@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import gsap from "gsap";
 import { SITE } from "../../content/site";
+import DedicationModal from "./DedicationModal";
 
 // Lazy-load the 3D canvas to avoid SSR issues
 const ThreeY = dynamic(() => import("./ThreeY"), {
@@ -12,6 +13,7 @@ const ThreeY = dynamic(() => import("./ThreeY"), {
 });
 
 export default function Hero() {
+  const [dedicationOpen, setDedicationOpen] = useState(false);
   const nameRef = useRef<HTMLDivElement>(null);
   const addisRef = useRef<HTMLDivElement>(null);
   const roleRef = useRef<HTMLParagraphElement>(null);
@@ -87,6 +89,16 @@ export default function Hero() {
       {/* ── Dedication Badge: Yeab My Crush ── */}
       <div
         id="cms-dedication-badge"
+        role="button"
+        tabIndex={0}
+        onClick={() => setDedicationOpen(true)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            setDedicationOpen(true);
+          }
+        }}
+        title="Click to open personal note for Yeab ❤️"
         style={{
           position: "absolute",
           top: "clamp(4.2rem, 7.5vh, 5.5rem)",
@@ -97,14 +109,29 @@ export default function Hero() {
           alignItems: "center",
           gap: "0.5rem",
           padding: "0.35rem 0.85rem",
-          background: "rgba(255, 74, 28, 0.08)",
-          border: "1px solid rgba(255, 74, 28, 0.35)",
+          background: "rgba(255, 74, 28, 0.1)",
+          border: "1px solid rgba(255, 74, 28, 0.4)",
           borderRadius: "999px",
           backdropFilter: "blur(10px)",
-          boxShadow: "0 4px 16px rgba(255, 74, 28, 0.12)",
-          cursor: "default",
+          boxShadow: "0 4px 20px rgba(255, 74, 28, 0.18)",
+          cursor: "pointer",
           animation: "floatSlow 4s ease-in-out infinite",
           overflow: "hidden",
+          transition: "transform 0.2s, background 0.2s, border-color 0.2s, box-shadow 0.2s",
+        }}
+        onMouseEnter={(e) => {
+          const el = e.currentTarget as HTMLElement;
+          el.style.transform = "scale(1.03)";
+          el.style.background = "rgba(255, 74, 28, 0.18)";
+          el.style.borderColor = "var(--vermilion)";
+          el.style.boxShadow = "0 6px 26px rgba(255, 74, 28, 0.35)";
+        }}
+        onMouseLeave={(e) => {
+          const el = e.currentTarget as HTMLElement;
+          el.style.transform = "scale(1)";
+          el.style.background = "rgba(255, 74, 28, 0.1)";
+          el.style.borderColor = "rgba(255, 74, 28, 0.4)";
+          el.style.boxShadow = "0 4px 20px rgba(255, 74, 28, 0.18)";
         }}
       >
         <span style={{ fontSize: "0.9rem", flexShrink: 0 }} aria-hidden="true">❤️</span>
@@ -124,7 +151,28 @@ export default function Hero() {
         >
           Dedicated to Yeab — My Crush &amp; The Most Talented Designer ✨
         </span>
+        <span
+          style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: "0.58rem",
+            color: "var(--paper)",
+            opacity: 0.6,
+            marginLeft: "0.2rem",
+            flexShrink: 0,
+          }}
+        >
+          (Open Note 💌)
+        </span>
       </div>
+
+      {/* Dedication Note Modal */}
+      <DedicationModal
+        isOpen={dedicationOpen}
+        onClose={() => setDedicationOpen(false)}
+        onOpenStudio={() => {
+          window.location.href = "/admin";
+        }}
+      />
 
       {/* Giant YEAB — top-left, deliberately cropped at edges */}
       <div

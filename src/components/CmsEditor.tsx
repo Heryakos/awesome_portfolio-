@@ -667,6 +667,35 @@ export default function CmsEditor() {
                   fontSize: "0.68rem",
                 }}
               />
+              <div style={{ marginTop: 8 }}>
+                <label style={{ display: "block", fontSize: "0.62rem", color: "#bbb", marginBottom: 4 }}>
+                  Personal Note (Shown when Yeab clicks the badge)
+                </label>
+                <textarea
+                  rows={4}
+                  value={cms.overrides.custom["dedication_letter"] ?? ""}
+                  placeholder="Leave empty for default heartfelt note, or write your own special words..."
+                  onChange={(e) => {
+                    if (e.target.value.trim()) {
+                      cms.setOverride("custom", "dedication_letter", e.target.value);
+                    } else {
+                      cms.removeOverride("custom", "dedication_letter");
+                    }
+                  }}
+                  style={{
+                    width: "100%",
+                    padding: "6px 8px",
+                    background: "rgba(0,0,0,0.5)",
+                    border: "1px solid rgba(255, 255, 255, 0.1)",
+                    borderRadius: 6,
+                    color: "#e8e4dc",
+                    fontFamily: "inherit",
+                    fontSize: "0.68rem",
+                    lineHeight: 1.4,
+                    resize: "vertical",
+                  }}
+                />
+              </div>
             </div>
 
             {/* Content Group Fields */}

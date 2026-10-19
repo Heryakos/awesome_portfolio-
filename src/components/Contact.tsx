@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -37,10 +37,19 @@ function MagneticLink({
 }
 
 export default function Contact() {
+  const [copiedToast, setCopiedToast] = useState<string | null>(null);
   const sectionRef  = useRef<HTMLElement>(null);
   const headRef     = useRef<HTMLHeadingElement>(null);
   const contactsRef = useRef<HTMLDivElement>(null);
   const socialRef   = useRef<HTMLDivElement>(null);
+
+  const copyToClipboard = (text: string, label: string) => {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text);
+      setCopiedToast(`Copied ${label} to clipboard! 📋`);
+      setTimeout(() => setCopiedToast(null), 2500);
+    }
+  };
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -73,10 +82,39 @@ export default function Contact() {
         background: "var(--ink)",
         color: "var(--paper)",
         overflow: "hidden",
+        position: "relative",
       }}
     >
-      <div className="t-label" style={{ opacity:0.35, marginBottom:"3rem", color:"var(--paper)" }}>
-        04 — Contact
+      {/* Copied Feedback Toast */}
+      {copiedToast && (
+        <div
+          role="status"
+          aria-live="polite"
+          style={{
+            position: "fixed",
+            bottom: "2rem",
+            left: "50%",
+            transform: "translateX(-50%)",
+            background: "rgba(255, 74, 28, 0.95)",
+            color: "#fff",
+            padding: "0.6rem 1.4rem",
+            borderRadius: "999px",
+            fontFamily: "var(--font-mono)",
+            fontSize: "0.75rem",
+            fontWeight: 700,
+            letterSpacing: "0.06em",
+            boxShadow: "0 8px 30px rgba(0,0,0,0.6)",
+            zIndex: 100000,
+            pointerEvents: "none",
+            animation: "fadeIn 0.25s ease-out",
+          }}
+        >
+          {copiedToast}
+        </div>
+      )}
+
+      <div className="t-label" style={{ opacity: 0.35, marginBottom: "3rem", color: "var(--paper)" }}>
+        06 — Contact &amp; Connect
       </div>
 
       {/* Main CTA headline */}
@@ -107,71 +145,141 @@ export default function Contact() {
           display: "flex",
           flexWrap: "wrap",
           justifyContent: "center",
-          gap: "clamp(1.5rem,4vw,4rem)",
-          marginBottom: "clamp(3rem,8vh,6rem)",
+          gap: "clamp(1.5rem,4vw,3.5rem)",
+          marginBottom: "clamp(3rem,8vh,5rem)",
+          alignItems: "center",
         }}
       >
         {/* Email */}
-        <MagneticLink href={`mailto:${SITE.email}`}>
-          <div style={{ textAlign:"center" }}>
-            <div className="t-label" style={{ opacity:0.35, marginBottom:"0.4rem", color:"var(--paper)" }}>Email</div>
-            <span style={{
-              fontFamily: "var(--font-display)",
-              fontWeight: 600,
-              fontSize: "clamp(0.9rem,1.5vw,1.4rem)",
-              color: "var(--paper)",
-              borderBottom: "1px solid rgba(239,235,227,0.3)",
-              paddingBottom: "0.3rem",
-              transition: "color 0.2s",
-            }}
+        <div style={{ textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: "0.4rem" }}>
+          <div className="t-label" style={{ opacity: 0.35, color: "var(--paper)" }}>Direct Email</div>
+          <MagneticLink href={`mailto:${SITE.email}`}>
+            <span
+              style={{
+                fontFamily: "var(--font-display)",
+                fontWeight: 600,
+                fontSize: "clamp(0.95rem,1.5vw,1.4rem)",
+                color: "var(--paper)",
+                borderBottom: "1px solid rgba(239,235,227,0.3)",
+                paddingBottom: "0.2rem",
+                transition: "color 0.2s",
+                display: "inline-block",
+              }}
               onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "var(--vermilion)"; }}
               onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "var(--paper)"; }}
             >
               <span id="cms-email">{SITE.email}</span>
             </span>
-          </div>
-        </MagneticLink>
-
-        {/* Divider */}
-        <div style={{ width:"1px", background:"rgba(239,235,227,0.12)", alignSelf:"stretch" }} aria-hidden="true" />
-
-        {/* Phone — PLACEHOLDER */}
-        <MagneticLink href={`tel:${SITE.phone.replace(/\s/g,"")}`}>
-          <div style={{ textAlign:"center" }}>
-            <div className="t-label" style={{ opacity:0.35, marginBottom:"0.4rem", color:"var(--paper)" }}>
-              Phone {/* PLACEHOLDER: update in content/site.ts */}
-            </div>
-            <span style={{
-              fontFamily: "var(--font-display)",
-              fontWeight: 600,
-              fontSize: "clamp(0.9rem,1.5vw,1.4rem)",
-              color: "var(--paper)",
-              borderBottom: "1px solid rgba(239,235,227,0.3)",
-              paddingBottom: "0.3rem",
+          </MagneticLink>
+          <button
+            type="button"
+            onClick={() => copyToClipboard(SITE.email, "email")}
+            style={{
+              background: "transparent",
+              border: "none",
+              color: "rgba(239,235,227,0.45)",
+              fontSize: "0.6rem",
+              fontFamily: "var(--font-mono)",
+              cursor: "pointer",
+              padding: "0.2rem 0.5rem",
+              borderRadius: "2px",
               transition: "color 0.2s",
             }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "var(--vermilion)"; }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "rgba(239,235,227,0.45)"; }}
+          >
+            📋 Copy email
+          </button>
+        </div>
+
+        {/* Divider */}
+        <div style={{ width: "1px", height: "40px", background: "rgba(239,235,227,0.12)" }} aria-hidden="true" />
+
+        {/* Phone & WhatsApp */}
+        <div style={{ textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: "0.4rem" }}>
+          <div className="t-label" style={{ opacity: 0.35, color: "var(--paper)" }}>
+            Phone &amp; WhatsApp
+          </div>
+          <MagneticLink href={`tel:${SITE.phone.replace(/\s/g,"")}`}>
+            <span
+              style={{
+                fontFamily: "var(--font-display)",
+                fontWeight: 600,
+                fontSize: "clamp(0.95rem,1.5vw,1.4rem)",
+                color: "var(--paper)",
+                borderBottom: "1px solid rgba(239,235,227,0.3)",
+                paddingBottom: "0.2rem",
+                transition: "color 0.2s",
+                display: "inline-block",
+              }}
               onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "var(--vermilion)"; }}
               onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "var(--paper)"; }}
             >
               <span id="cms-phone">{SITE.phone}</span>
             </span>
+          </MagneticLink>
+          <div style={{ display: "flex", gap: "0.6rem", alignItems: "center" }}>
+            <a
+              href="https://wa.me/251986267543?text=Hi%20Yeabsira,%20I%20saw%20your%20portfolio%20and%20would%20love%20to%20discuss%20a%20design%20project!"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                color: "#25D366",
+                fontSize: "0.6rem",
+                fontFamily: "var(--font-mono)",
+                textDecoration: "none",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.2rem",
+                transition: "opacity 0.2s",
+              }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.opacity = "0.8"; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.opacity = "1"; }}
+            >
+              💬 WhatsApp ↗
+            </a>
+            <span style={{ color: "rgba(239,235,227,0.2)", fontSize: "0.6rem" }}>·</span>
+            <button
+              type="button"
+              onClick={() => copyToClipboard(SITE.phone, "phone number")}
+              style={{
+                background: "transparent",
+                border: "none",
+                color: "rgba(239,235,227,0.45)",
+                fontSize: "0.6rem",
+                fontFamily: "var(--font-mono)",
+                cursor: "pointer",
+                padding: "0.2rem",
+                transition: "color 0.2s",
+              }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "var(--vermilion)"; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "rgba(239,235,227,0.45)"; }}
+            >
+              📋 Copy
+            </button>
           </div>
-        </MagneticLink>
+        </div>
 
         {/* Divider */}
-        <div style={{ width:"1px", background:"rgba(239,235,227,0.12)", alignSelf:"stretch" }} aria-hidden="true" />
+        <div style={{ width: "1px", height: "40px", background: "rgba(239,235,227,0.12)" }} aria-hidden="true" />
 
         {/* Location */}
-        <div style={{ textAlign:"center" }}>
-          <div className="t-label" style={{ opacity:0.35, marginBottom:"0.4rem", color:"var(--paper)" }}>Based in</div>
-          <span style={{
-            fontFamily: "var(--font-display)",
-            fontWeight: 600,
-            fontSize: "clamp(0.9rem,1.5vw,1.4rem)",
-            color: "var(--paper)",
-            opacity: 0.7,
-          }}>
+        <div style={{ textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: "0.4rem" }}>
+          <div className="t-label" style={{ opacity: 0.35, color: "var(--paper)" }}>Based in</div>
+          <span
+            style={{
+              fontFamily: "var(--font-display)",
+              fontWeight: 600,
+              fontSize: "clamp(0.95rem,1.5vw,1.4rem)",
+              color: "var(--paper)",
+              opacity: 0.75,
+              paddingBottom: "0.2rem",
+            }}
+          >
             <span id="cms-location">{SITE.location}</span>
+          </span>
+          <span className="t-label" style={{ color: "rgba(239,235,227,0.35)", fontSize: "0.6rem" }}>
+            East Africa Time (GMT+3)
           </span>
         </div>
       </div>
