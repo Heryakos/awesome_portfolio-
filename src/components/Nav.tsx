@@ -3,17 +3,30 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import gsap from "gsap";
 import { SITE } from "../../content/site";
 
 export default function Nav() {
-  const navRef     = useRef<HTMLElement>(null);
+  const navRef = useRef<HTMLElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
-  const menuRef    = useRef<HTMLDivElement>(null);
-  const pathname   = usePathname();
+  const pathname = usePathname();
 
   // Are we on a case study page?
   const isCaseStudy = pathname?.startsWith("/work/");
+
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (menuOpen) {
+      document.body.style.overflow = "hidden";
+      document.body.style.touchAction = "none";
+    } else {
+      document.body.style.overflow = "";
+      document.body.style.touchAction = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+      document.body.style.touchAction = "";
+    };
+  }, [menuOpen]);
 
   // Scroll-linked opacity
   useEffect(() => {
@@ -21,6 +34,10 @@ export default function Nav() {
     const handleScroll = () => {
       const y = window.scrollY;
       if (!navRef.current) return;
+      if (menuOpen) {
+        navRef.current.style.opacity = "1";
+        return;
+      }
       if (y > 80) {
         navRef.current.style.opacity = y > lastY ? "0.4" : "1";
       } else {
@@ -45,32 +62,42 @@ export default function Nav() {
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("keydown", handleKey);
     };
-  }, []);
-
-  // Mobile menu animation
-  useEffect(() => {
-    if (!menuRef.current) return;
-    if (menuOpen) {
-      gsap.fromTo(menuRef.current,
-        { yPercent: -100, opacity: 0 },
-        { yPercent: 0, opacity: 1, duration: 0.7, ease: "expo.out" }
-      );
-      gsap.fromTo(
-        menuRef.current.querySelectorAll(".menu__item"),
-        { y: 40, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.5, stagger: 0.07, ease: "power3.out", delay: 0.2 }
-      );
-    } else {
-      gsap.to(menuRef.current, { yPercent: -100, opacity: 0, duration: 0.5, ease: "expo.in" });
-    }
   }, [menuOpen]);
+
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    setMenuOpen(false);
+    if (href.startsWith("/#") || href.startsWith("#")) {
+      const id = href.replace(/^\/?#/, "");
+      const target = document.getElementById(id);
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  };
 
   return (
     <>
-      <nav className="nav" ref={navRef} aria-label="Main navigation">
+      <nav
+        className="nav"
+        ref={navRef}
+        aria-label="Main navigation"
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 100000,
+          padding: "1.2rem clamp(1.25rem, 4vw, 2.5rem)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          mixBlendMode: menuOpen ? "normal" : "difference",
+          transition: "opacity 0.25s ease, background 0.25s ease",
+        }}
+      >
         {/* Logo / back */}
         {isCaseStudy ? (
-          /* ── Case study page: show a prominent back link ── */
           <Link
             href="/#work"
             className="nav__logo"
@@ -78,13 +105,31 @@ export default function Nav() {
             style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
           >
             <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-              <path d="M10 3L5 8L10 13" stroke="currentColor" strokeWidth="1.5"
-                strokeLinecap="round" strokeLinejoin="round" fill="none" />
+              <path
+                d="M10 3L5 8L10 13"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                fill="none"
+              />
             </svg>
             YEAB
           </Link>
         ) : (
-          <Link href="/" className="nav__logo" aria-label="Yeab Addis home">
+          <Link
+            href="/"
+            className="nav__logo"
+            aria-label="Yeab Addis home"
+            onClick={() => setMenuOpen(false)}
+            style={{
+              color: menuOpen ? "#EFEBE3" : "var(--paper)",
+              fontWeight: 800,
+              fontSize: "1.05rem",
+              letterSpacing: "0.06em",
+              textDecoration: "none",
+            }}
+          >
             YEAB
           </Link>
         )}
@@ -94,7 +139,13 @@ export default function Nav() {
           <ul className="nav__links" role="list">
             {SITE.nav.map((item) => (
               <li key={item.href}>
-                <a href={item.href} className="nav__link">{item.label}</a>
+                <a
+                  href={item.href}
+                  className="nav__link"
+                  onClick={(e) => handleNavClick(e, item.href)}
+                >
+                  {item.label}
+                </a>
               </li>
             ))}
             <li key="admin-nav" style={{ marginLeft: "0.4rem" }}>
@@ -138,14 +189,29 @@ export default function Nav() {
         {/* Mobile toggle — only on home */}
         {!isCaseStudy && (
           <button
-            className="nav__menu-btn t-label text-paper"
+            className="nav__menu-btn t-label"
             onClick={() => setMenuOpen((o) => !o)}
             aria-expanded={menuOpen}
             aria-controls="mobile-menu"
             aria-label={menuOpen ? "Close menu" : "Open menu"}
-            style={{ background: "none", border: "none", cursor: "pointer", display: "none" }}
+            style={{
+              background: menuOpen ? "rgba(255, 74, 28, 0.16)" : "rgba(239, 235, 227, 0.06)",
+              border: menuOpen ? "1px solid rgba(255, 74, 28, 0.5)" : "1px solid rgba(239, 235, 227, 0.15)",
+              color: menuOpen ? "var(--vermilion)" : "#EFEBE3",
+              padding: "0.45rem 0.85rem",
+              borderRadius: "999px",
+              cursor: "pointer",
+              fontSize: "0.72rem",
+              fontWeight: 700,
+              letterSpacing: "0.08em",
+              display: "none", // Overridden by media query on mobile
+              alignItems: "center",
+              gap: 6,
+              transition: "all 0.2s",
+            }}
           >
-            {menuOpen ? "CLOSE" : "MENU"}
+            <span>{menuOpen ? "✕" : "☰"}</span>
+            <span>{menuOpen ? "CLOSE" : "MENU"}</span>
           </button>
         )}
 
@@ -153,15 +219,16 @@ export default function Nav() {
         {isCaseStudy && (
           <Link
             href="/#work"
-            className="nav__menu-btn t-label text-paper"
+            className="nav__menu-btn t-label"
             aria-label="Back to work"
             style={{
               display: "none",
               background: "none",
               border: "1px solid rgba(239,235,227,0.3)",
               padding: "0.4rem 0.8rem",
-              borderRadius: "2px",
+              borderRadius: "4px",
               textDecoration: "none",
+              color: "#EFEBE3",
             }}
           >
             ← Back
@@ -169,37 +236,85 @@ export default function Nav() {
         )}
       </nav>
 
-      {/* Full-screen mobile menu */}
+      {/* Full-screen mobile menu drawer */}
       <div
         id="mobile-menu"
-        ref={menuRef}
         role="dialog"
         aria-label="Mobile navigation"
         aria-modal="true"
         style={{
-          position: "fixed", inset: 0,
-          background: "var(--ink)", zIndex: 900,
-          display: "flex", flexDirection: "column",
-          alignItems: "flex-start", justifyContent: "center",
-          padding: "2rem 2.5rem",
-          transform: "translateY(-100%)", opacity: 0,
+          position: "fixed",
+          inset: 0,
+          background: "#0c0d0e",
+          zIndex: 99999,
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          padding: "5.5rem 2rem calc(2rem + env(safe-area-inset-bottom, 0px))",
+          transform: menuOpen ? "translateY(0%)" : "translateY(-100%)",
+          opacity: menuOpen ? 1 : 0,
+          visibility: menuOpen ? "visible" : "hidden",
           pointerEvents: menuOpen ? "all" : "none",
+          transition: "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease, visibility 0.4s",
+          boxShadow: menuOpen ? "0 20px 80px rgba(0,0,0,0.9)" : "none",
         }}
       >
-        <ul role="list" style={{ listStyle: "none" }}>
-          {SITE.nav.map((item) => (
-            <li key={item.href} className="menu__item">
+        <ul
+          role="list"
+          style={{
+            listStyle: "none",
+            margin: 0,
+            padding: 0,
+            display: "flex",
+            flexDirection: "column",
+            gap: "1.2rem",
+          }}
+        >
+          {SITE.nav.map((item, idx) => (
+            <li
+              key={item.href}
+              className="menu__item"
+              style={{
+                transform: menuOpen ? "translateY(0)" : "translateY(16px)",
+                opacity: menuOpen ? 1 : 0,
+                transition: `all 0.35s ease ${0.05 * idx}s`,
+              }}
+            >
               <a
                 href={item.href}
-                className="t-hero text-paper"
-                onClick={() => setMenuOpen(false)}
-                style={{ textDecoration: "none", display: "block", lineHeight: 1.1 }}
+                onClick={(e) => handleNavClick(e, item.href)}
+                style={{
+                  fontFamily: "var(--font-display)",
+                  fontSize: "clamp(2rem, 7vw, 3.2rem)",
+                  fontWeight: 800,
+                  color: "#EFEBE3",
+                  textDecoration: "none",
+                  display: "inline-block",
+                  letterSpacing: "-0.02em",
+                  transition: "color 0.2s",
+                }}
+                onTouchStart={(e) => {
+                  (e.currentTarget as HTMLElement).style.color = "var(--vermilion)";
+                }}
+                onTouchEnd={(e) => {
+                  (e.currentTarget as HTMLElement).style.color = "#EFEBE3";
+                }}
               >
                 {item.label}
               </a>
             </li>
           ))}
-          <li className="menu__item" style={{ marginTop: "1.5rem" }}>
+
+          {/* Design Studio / Admin Button */}
+          <li
+            className="menu__item"
+            style={{
+              marginTop: "0.8rem",
+              transform: menuOpen ? "translateY(0)" : "translateY(16px)",
+              opacity: menuOpen ? 1 : 0,
+              transition: "all 0.35s ease 0.3s",
+            }}
+          >
             <Link
               href="/admin"
               onClick={() => setMenuOpen(false)}
@@ -208,9 +323,9 @@ export default function Nav() {
                 display: "inline-flex",
                 alignItems: "center",
                 gap: 8,
-                padding: "8px 16px",
-                background: "rgba(255, 74, 28, 0.12)",
-                border: "1px solid rgba(255, 74, 28, 0.35)",
+                padding: "10px 18px",
+                background: "rgba(255, 74, 28, 0.15)",
+                border: "1px solid rgba(255, 74, 28, 0.4)",
                 borderRadius: 999,
                 color: "var(--vermilion)",
                 fontFamily: "var(--font-mono)",
@@ -225,15 +340,29 @@ export default function Nav() {
             </Link>
           </li>
         </ul>
-        <div className="menu__item t-label text-paper" style={{ marginTop: "4rem", opacity: 0.4 }}>
-          {SITE.email}
+
+        {/* Footer info in menu */}
+        <div
+          style={{
+            borderTop: "1px solid rgba(255,255,255,0.08)",
+            paddingTop: "1.2rem",
+            display: "flex",
+            flexDirection: "column",
+            gap: "0.4rem",
+            color: "rgba(239,235,227,0.5)",
+            fontFamily: "var(--font-mono)",
+            fontSize: "0.7rem",
+          }}
+        >
+          <div>{SITE.email}</div>
+          <div style={{ opacity: 0.7 }}>{SITE.phone} · {SITE.location}</div>
         </div>
       </div>
 
       <style>{`
         @media (max-width: 768px) {
           .nav__links { display: none !important; }
-          .nav__menu-btn { display: block !important; }
+          .nav__menu-btn { display: inline-flex !important; }
         }
       `}</style>
     </>

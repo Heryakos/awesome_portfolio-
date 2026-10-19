@@ -40,7 +40,7 @@ export default function Work() {
   );
 
   useEffect(() => {
-    const isMobile = window.innerWidth < 768;
+    const isMobile = window.innerWidth <= 768;
     if (isMobile) return;
 
     const ctx = gsap.context(() => {
@@ -79,10 +79,28 @@ export default function Work() {
       }}
     >
       {/* Labels */}
-      <div className="t-label" style={{ position:"absolute", top:"1.5rem", left:"2.5rem", zIndex:20, opacity:0.45 }}>
+      <div
+        className="t-label work__header-label"
+        style={{
+          position: "absolute",
+          top: "1.5rem",
+          left: "clamp(1.25rem, 4vw, 2.5rem)",
+          zIndex: 20,
+          opacity: 0.45,
+        }}
+      >
         Selected Work — {allProjects.length} Projects
       </div>
-      <div className="t-label" style={{ position:"absolute", top:"1.5rem", right:"2.5rem", zIndex:20, opacity:0.3 }}>
+      <div
+        className="t-label work__scroll-label"
+        style={{
+          position: "absolute",
+          top: "1.5rem",
+          right: "clamp(1.25rem, 4vw, 2.5rem)",
+          zIndex: 20,
+          opacity: 0.3,
+        }}
+      >
         Scroll →
       </div>
 
@@ -226,7 +244,13 @@ export default function Work() {
 
       {/* Mobile stack */}
       <style>{`
-        @media (max-width: 767px) {
+        @media (max-width: 768px) {
+          .work__scroll-label {
+            display: none !important;
+          }
+          .work__header-label {
+            top: 4.8rem !important;
+          }
           #work {
             height: auto !important;
             overflow: visible !important;
@@ -237,9 +261,9 @@ export default function Work() {
             overflow: visible !important;
             padding-left: 1.25rem !important;
             padding-right: 1.25rem !important;
-            padding-top: 5rem !important;
-            padding-bottom: 3rem !important;
-            gap: 1.25rem !important;
+            padding-top: 7.2rem !important;
+            padding-bottom: 3.5rem !important;
+            gap: 1.5rem !important;
           }
           #work > div[data-cursor] > article {
             width: 100% !important;

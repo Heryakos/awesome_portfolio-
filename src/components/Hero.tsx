@@ -88,13 +88,14 @@ export default function Hero() {
         id="cms-dedication-badge"
         style={{
           position: "absolute",
-          top: "clamp(4.8rem, 8vh, 5.8rem)",
-          left: "clamp(1.5rem, 4vw, 5rem)",
+          top: "clamp(4.2rem, 7.5vh, 5.5rem)",
+          left: "clamp(1.25rem, 4vw, 5rem)",
+          maxWidth: "calc(100vw - 2.5rem)",
           zIndex: 10,
           display: "inline-flex",
           alignItems: "center",
           gap: "0.5rem",
-          padding: "0.4rem 0.9rem",
+          padding: "0.35rem 0.85rem",
           background: "rgba(255, 74, 28, 0.08)",
           border: "1px solid rgba(255, 74, 28, 0.35)",
           borderRadius: "999px",
@@ -102,18 +103,22 @@ export default function Hero() {
           boxShadow: "0 4px 16px rgba(255, 74, 28, 0.12)",
           cursor: "default",
           animation: "floatSlow 4s ease-in-out infinite",
+          overflow: "hidden",
         }}
       >
-        <span style={{ fontSize: "0.95rem" }} aria-hidden="true">❤️</span>
+        <span style={{ fontSize: "0.9rem", flexShrink: 0 }} aria-hidden="true">❤️</span>
         <span
           id="cms-dedication-text"
           style={{
             fontFamily: "var(--font-mono)",
-            fontSize: "clamp(0.65rem, 1.2vw, 0.75rem)",
+            fontSize: "clamp(0.6rem, 1.1vw, 0.72rem)",
             fontWeight: 700,
-            letterSpacing: "0.08em",
+            letterSpacing: "0.06em",
             textTransform: "uppercase",
             color: "var(--vermilion)",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
           }}
         >
           Dedicated to Yeab — My Crush &amp; The Most Talented Designer ✨
@@ -188,24 +193,27 @@ export default function Hero() {
         ref={roleRef}
         style={{
           position: "absolute",
-          bottom: "clamp(2.5rem, 5vh, 4rem)",
-          left: "clamp(1.5rem, 4vw, 5rem)",
+          bottom: "clamp(2rem, 5vh, 4rem)",
+          left: "clamp(1.25rem, 4vw, 5rem)",
+          maxWidth: "calc(100vw - 6rem)",
           zIndex: 2,
           fontFamily: "var(--font-serif)",
           fontStyle: "italic",
-          fontSize: "clamp(0.9rem, 1.5vw, 1.4rem)",
+          fontSize: "clamp(0.85rem, 1.4vw, 1.35rem)",
           color: "var(--ink)",
-          opacity: 0.75,
+          opacity: 0.8,
           margin: 0,
           willChange: "transform, opacity",
+          lineHeight: 1.3,
         }}
       >
         <span id="cms-role">{SITE.role}</span> — <span id="cms-role-sub">Visual identity &amp; brand experience</span>
       </p>
 
-      {/* Scroll hint — bottom right */}
+      {/* Scroll hint — bottom right (desktop only to prevent mobile overlap) */}
       <div
         ref={scrollHintRef}
+        className="hero__scroll-hint"
         style={{
           position: "absolute",
           bottom: "clamp(2.5rem, 5vh, 4rem)",
@@ -242,6 +250,14 @@ export default function Hero() {
           }}
         />
       </div>
+
+      <style>{`
+        @media (max-width: 768px) {
+          .hero__scroll-hint {
+            display: none !important;
+          }
+        }
+      `}</style>
     </section>
   );
 }

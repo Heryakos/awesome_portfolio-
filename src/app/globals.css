@@ -415,8 +415,11 @@ section {
     display: none !important;
   }
   .nav__menu-btn {
-    display: block !important;
+    display: inline-flex !important;
     cursor: pointer !important;
+  }
+  body[style*="overflow: hidden"] .cms-toggle-bar {
+    display: none !important;
   }
 
   /* Work cards */

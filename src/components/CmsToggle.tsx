@@ -28,6 +28,7 @@ export default function CmsToggle() {
 
   return (
     <div
+      className="cms-toggle-bar"
       style={{
         position: "fixed",
         bottom: isMobile ? "calc(16px + env(safe-area-inset-bottom, 0px))" : 24,
