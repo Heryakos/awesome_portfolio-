@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import gsap from "gsap";
 import { SITE } from "../../content/site";
 import DedicationModal from "./DedicationModal";
+import { useCms } from "./CmsContext";
 
 // Lazy-load the 3D canvas to avoid SSR issues
 const ThreeY = dynamic(() => import("./ThreeY"), {
@@ -13,11 +14,19 @@ const ThreeY = dynamic(() => import("./ThreeY"), {
 });
 
 export default function Hero() {
+  const cms = useCms();
+  const isDedicationShown = cms.overrides.custom["show_dedication"] === "true";
   const [dedicationOpen, setDedicationOpen] = useState(false);
   const nameRef = useRef<HTMLDivElement>(null);
   const addisRef = useRef<HTMLDivElement>(null);
   const roleRef = useRef<HTMLParagraphElement>(null);
   const scrollHintRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleOpen = () => setDedicationOpen(true);
+    window.addEventListener("open-dedication-note", handleOpen);
+    return () => window.removeEventListener("open-dedication-note", handleOpen);
+  }, []);
 
   useEffect(() => {
     // Give loader time to complete before animating in
@@ -105,7 +114,7 @@ export default function Hero() {
           left: "clamp(1.25rem, 4vw, 5rem)",
           maxWidth: "calc(100vw - 2.5rem)",
           zIndex: 10,
-          display: "inline-flex",
+          display: isDedicationShown ? "inline-flex" : "none",
           alignItems: "center",
           gap: "0.5rem",
           padding: "0.35rem 0.85rem",

@@ -713,13 +713,16 @@ export default function CmsEditor() {
                 >
                   <input
                     type="checkbox"
-                    checked={cms.overrides.custom["hide_dedication"] !== "true"}
+                    checked={cms.overrides.custom["show_dedication"] === "true"}
                     onChange={(e) => {
                       cms.setOverride(
                         "custom",
-                        "hide_dedication",
-                        e.target.checked ? "false" : "true"
+                        "show_dedication",
+                        e.target.checked ? "true" : "false"
                       );
+                      if (cms.overrides.custom["hide_dedication"]) {
+                        cms.removeOverride("custom", "hide_dedication");
+                      }
                       cms.showToast(
                         e.target.checked ? "Banner shown" : "Banner hidden"
                       );
@@ -756,9 +759,45 @@ export default function CmsEditor() {
                 }}
               />
               <div style={{ marginTop: 8 }}>
-                <label style={{ display: "block", fontSize: "0.62rem", color: "#bbb", marginBottom: 4 }}>
-                  Personal Note (Shown when Yeab clicks the badge)
-                </label>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginBottom: 4,
+                  }}
+                >
+                  <label style={{ fontSize: "0.62rem", color: "#bbb" }}>
+                    Personal Note (Shown when Yeab clicks the badge)
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      window.dispatchEvent(new CustomEvent("open-dedication-note"));
+                    }}
+                    style={{
+                      background: "rgba(255, 74, 28, 0.15)",
+                      border: "1px solid rgba(255, 74, 28, 0.35)",
+                      color: "#FF4A1C",
+                      padding: "2px 8px",
+                      borderRadius: 4,
+                      fontSize: "0.6rem",
+                      cursor: "pointer",
+                      fontFamily: "inherit",
+                      transition: "background 0.2s",
+                    }}
+                    onMouseEnter={(e) => {
+                      (e.currentTarget as HTMLElement).style.background =
+                        "rgba(255, 74, 28, 0.25)";
+                    }}
+                    onMouseLeave={(e) => {
+                      (e.currentTarget as HTMLElement).style.background =
+                        "rgba(255, 74, 28, 0.15)";
+                    }}
+                  >
+                    💌 Preview Note
+                  </button>
+                </div>
                 <textarea
                   rows={4}
                   value={cms.overrides.custom["dedication_letter"] ?? ""}

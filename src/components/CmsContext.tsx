@@ -441,10 +441,10 @@ export function CmsProvider({ children }: { children: ReactNode }) {
 
     const dedicationEl = document.getElementById("cms-dedication-badge");
     if (dedicationEl) {
-      if (overrides.custom["hide_dedication"] === "true") {
-        dedicationEl.style.display = "none";
-      } else {
+      if (overrides.custom["show_dedication"] === "true") {
         dedicationEl.style.display = "inline-flex";
+      } else {
+        dedicationEl.style.display = "none";
       }
     }
   }, [overrides]);
