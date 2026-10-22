@@ -94,7 +94,7 @@ export default function Hero() {
           position: "absolute",
           inset: 0,
           zIndex: 0,
-          pointerEvents: "auto",
+          pointerEvents: "none",
         }}
         aria-hidden="true"
       >
