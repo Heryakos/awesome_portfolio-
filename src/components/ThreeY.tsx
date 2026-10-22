@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useMemo, Suspense } from "react";
+import { useRef, useMemo, useState, useEffect, Suspense } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { useMousePosition } from "@/hooks/useMousePosition";
@@ -26,7 +26,7 @@ function createYShape(): THREE.Shape {
   return shape;
 }
 
-// ── The 3D Y mesh (Universal Mobile & Desktop Performance) ────
+// ── The 3D Y mesh (Interactive Mouse/Touch Drag-to-Rotate) ────
 function YMesh() {
   const groupRef = useRef<THREE.Group>(null!);
   const meshRef = useRef<THREE.Mesh>(null!);
@@ -38,6 +38,20 @@ function YMesh() {
   const isGlass = cms.overrides.themePreset === "apple-glass" || effects?.yMaterial === "glass";
   const yMaterial = isGlass ? "glass" : (effects?.yMaterial || "obsidian");
   const speedMult = effects?.ySpeed ?? 1.0;
+
+  // Interaction & Physics state
+  const isDragging = useRef(false);
+  const dragStartPos = useRef({ x: 0, y: 0 });
+  const prevPointer = useRef({ x: 0, y: 0 });
+  const userRotation = useRef({ x: 0, y: 0 });
+  const rotVelocity = useRef({ x: 0, y: 0 });
+  const lastInteractTime = useRef(0);
+
+  // Elastic spring rebound & hover states
+  const scaleImpulse = useRef(0);
+  const scaleVelocity = useRef(0);
+  const [hovered, setHovered] = useState(false);
+  const [active, setActive] = useState(false);
 
   // Responsive scale: fits cleanly between text on mobile portrait & desktop
   const isMobile = viewport.width < 5;
@@ -60,23 +74,97 @@ function YMesh() {
     return geo;
   }, []);
 
+  // Global window listeners for drag-to-rotate so dragging stays smooth anywhere on screen
+  useEffect(() => {
+    const onPointerMove = (e: PointerEvent) => {
+      if (!isDragging.current) return;
+      const dx = e.clientX - prevPointer.current.x;
+      const dy = e.clientY - prevPointer.current.y;
+      prevPointer.current = { x: e.clientX, y: e.clientY };
+
+      const sensitivity = 0.0075;
+      userRotation.current.y += dx * sensitivity;
+      userRotation.current.x += dy * sensitivity;
+
+      rotVelocity.current = {
+        x: dy * sensitivity,
+        y: dx * sensitivity,
+      };
+      lastInteractTime.current = performance.now();
+    };
+
+    const onPointerUp = () => {
+      if (isDragging.current) {
+        isDragging.current = false;
+        setActive(false);
+        document.body.style.cursor = hovered ? "grab" : "default";
+      }
+    };
+
+    window.addEventListener("pointermove", onPointerMove);
+    window.addEventListener("pointerup", onPointerUp);
+    window.addEventListener("pointercancel", onPointerUp);
+    return () => {
+      window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("pointerup", onPointerUp);
+      window.removeEventListener("pointercancel", onPointerUp);
+    };
+  }, [hovered]);
+
+  const handlePointerDown = (e: any) => {
+    e.stopPropagation();
+    isDragging.current = true;
+    setActive(true);
+    dragStartPos.current = { x: e.clientX, y: e.clientY };
+    prevPointer.current = { x: e.clientX, y: e.clientY };
+    rotVelocity.current = { x: 0, y: 0 };
+    lastInteractTime.current = performance.now();
+
+    // Tactile spring bounce on click
+    scaleVelocity.current = 0.35;
+    document.body.style.cursor = "grabbing";
+  };
+
   useFrame((state, delta) => {
     if (!groupRef.current) return;
+    const dt = Math.min(delta, 0.05);
     const t = state.clock.getElapsedTime() * speedMult;
 
-    // Organic continuous floating rotation
-    const autoRotX = Math.sin(t * 0.7) * 0.14;
-    const autoRotY = Math.cos(t * 0.5) * 0.22;
+    // Harmonic spring oscillator for tactile rebound
+    const k = 180;
+    const c = 14;
+    const force = -k * scaleImpulse.current - c * scaleVelocity.current;
+    scaleVelocity.current += force * dt;
+    scaleImpulse.current += scaleVelocity.current * dt;
+
+    // Organic continuous floating oscillation
+    const autoRotX = Math.sin(t * 0.7) * 0.12;
+    const autoRotY = Math.cos(t * 0.5) * 0.18;
     const floatY = Math.sin(t * 1.1) * 0.08;
 
-    groupRef.current.scale.set(responsiveScale, responsiveScale, responsiveScale);
+    // Drag inertia & momentum decay
+    if (!isDragging.current) {
+      userRotation.current.x += rotVelocity.current.x;
+      userRotation.current.y += rotVelocity.current.y;
+      rotVelocity.current.x *= Math.pow(0.92, dt * 60);
+      rotVelocity.current.y *= Math.pow(0.92, dt * 60);
 
-    // Blend autonomous float with smooth desktop mouse tilt
-    const targetRX = autoRotX - mouse.y * 0.35;
-    const targetRY = autoRotY + mouse.x * 0.45;
+      // When idle for over 2 seconds, gently resume ambient rotation
+      const idleTime = (performance.now() - lastInteractTime.current) / 1000;
+      if (idleTime > 2.0) {
+        userRotation.current.y += dt * 0.2 * speedMult;
+      }
+    }
 
-    groupRef.current.rotation.x += (targetRX - groupRef.current.rotation.x) * 0.06;
-    groupRef.current.rotation.y += (targetRY - groupRef.current.rotation.y) * 0.08;
+    // Scale blending (hover swell + spring rebound)
+    const hoverScale = hovered ? 1.05 : 1.0;
+    const activeScale = active ? 0.98 : 1.0;
+    const currentScale = responsiveScale * hoverScale * activeScale * (1 + scaleImpulse.current);
+    groupRef.current.scale.set(currentScale, currentScale, currentScale);
+
+    // Apply rotation: user drag + float + gentle desktop mouse tilt
+    groupRef.current.rotation.x = userRotation.current.x + autoRotX - mouse.y * 0.15;
+    groupRef.current.rotation.y = userRotation.current.y + autoRotY + mouse.x * 0.25;
     groupRef.current.position.y = posY + floatY;
   });
 
@@ -166,6 +254,21 @@ function YMesh() {
         geometry={geometry}
         castShadow
         receiveShadow
+        onPointerDown={handlePointerDown}
+        onPointerOver={(e) => {
+          e.stopPropagation();
+          setHovered(true);
+          if (!isDragging.current) {
+            document.body.style.cursor = "grab";
+          }
+        }}
+        onPointerOut={(e) => {
+          e.stopPropagation();
+          setHovered(false);
+          if (!isDragging.current) {
+            document.body.style.cursor = "default";
+          }
+        }}
       >
         <meshPhysicalMaterial
           {...matProps}
@@ -187,7 +290,8 @@ export default function ThreeY({ style }: { style?: React.CSSProperties }) {
       style={{
         width: "100%",
         height: "100%",
-        pointerEvents: "none",
+        pointerEvents: "auto",
+        touchAction: "pan-y",
         ...style,
       }}
       aria-hidden="true"
