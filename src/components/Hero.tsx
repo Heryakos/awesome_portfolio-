@@ -80,7 +80,13 @@ export default function Hero() {
       id="hero"
       className="hero"
       aria-label="Hero — Yeab Addis, Graphic Designer"
-      style={{ position: "relative", minHeight: "100dvh", overflow: "hidden" }}
+      style={{
+        position: "relative",
+        minHeight: "100dvh",
+        overflow: "hidden",
+        background: "var(--paper-bg, var(--paper))",
+        transition: "background-color 0.35s ease",
+      }}
     >
       {/* 3D Y — fills the background */}
       <div

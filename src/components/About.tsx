@@ -564,6 +564,7 @@ export default function About() {
           {allCerts.map((cert, idx) => (
             <div
               key={cert.title}
+              className="cert-card"
               data-cursor="link"
               onClick={() => setActiveCertIndex(idx)}
               style={{
@@ -1030,6 +1031,7 @@ export default function About() {
             {filteredReviews.map((review: any) => (
               <div
                 key={review.id}
+                className="review-card"
                 style={{
                   background: "rgba(239,235,227,0.03)",
                   border: "1px solid rgba(239,235,227,0.1)",

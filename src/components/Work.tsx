@@ -75,7 +75,8 @@ export default function Work() {
         position: "relative",
         height: "100vh",
         overflow: "hidden",
-        background: "var(--paper)",
+        background: "var(--paper-bg, var(--paper))",
+        transition: "background-color 0.35s ease",
       }}
     >
       {/* Labels */}
@@ -121,13 +122,14 @@ export default function Work() {
         {allProjects.map((project, i) => (
           <article
             key={project.slug}
+            className="work__card"
             style={{
               width: `${CARD_WIDTH}vw`,
               height: `${CARD_HEIGHT}vh`,
               flexShrink: 0,
               position: "relative",
               overflow: "hidden",
-              borderRadius: "2px",
+              borderRadius: "4px",
             }}
             aria-label={`Project: ${project.title}`}
           >

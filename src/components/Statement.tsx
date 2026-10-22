@@ -85,7 +85,8 @@ export default function Statement() {
         padding: "clamp(6rem, 12vh, 10rem) clamp(1.5rem, 5vw, 5rem)",
         overflow: "hidden",
         position: "relative",
-        background: "var(--paper)",
+        background: "var(--paper-bg, var(--paper))",
+        transition: "background-color 0.35s ease",
       }}
     >
       {/* Decorative vertical line — editorial detail */}

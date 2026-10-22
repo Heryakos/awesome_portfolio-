@@ -44,7 +44,7 @@
 }
 
 html {
-  background: var(--paper);
+  background: var(--paper-bg, var(--paper));
   color: var(--ink);
   font-family: var(--font-display);
   -webkit-font-smoothing: antialiased;
@@ -56,7 +56,7 @@ html {
 }
 
 body {
-  background: var(--paper);
+  background: var(--paper-bg, var(--paper));
   min-height: 100dvh;
   cursor: default; /* Native OS cursor is always visible and reliable */
   overflow-x: hidden;
@@ -497,31 +497,81 @@ section {
   }
 }
 
-/* ── Apple Liquid Glass Theme ──────────────────────────────── */
+/* ── Dark Mode Typography & Contrast Rules ────────────────── */
+html[data-theme-mode="dark"] {
+  --paper-bg: #090a0d;
+  --paper: #f5f3ef;
+  --ink: #f5f5f7;
+  --dark-section-bg: #0d0f14;
+  --dark-section-text: #f5f5f7;
+}
+
+html[data-theme-mode="dark"] #contact .t-label,
+html[data-theme-mode="dark"] #about .t-label {
+  color: var(--paper);
+}
+
+html[data-theme-mode="dark"] #contact h2,
+html[data-theme-mode="dark"] #about h2,
+html[data-theme-mode="dark"] #about h3 {
+  color: var(--paper);
+}
+
+/* ── Apple Liquid Glass Theme (visionOS Luxury Aesthetic) ──── */
 [data-theme="glass"] {
-  --glass-bg: rgba(255, 255, 255, 0.05);
+  --paper-bg: #050609;
+  --glass-surface: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+  --glass-surface-hover: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.04) 100%);
   --glass-border: rgba(255, 255, 255, 0.14);
-  --glass-specular: rgba(255, 255, 255, 0.22);
+  --glass-highlight: rgba(255, 255, 255, 0.45);
+  --glass-shadow: 0 20px 50px rgba(0, 0, 0, 0.55), inset 0 1px 1px 0 rgba(255, 255, 255, 0.45), inset 0 0 0 1px rgba(255, 255, 255, 0.08);
 }
 
 [data-theme="glass"] body {
-  background: radial-gradient(circle at 50% 0%, #171b26 0%, #07080c 100%) fixed !important;
+  background: radial-gradient(circle at 50% 10%, #151a2e 0%, #0a0d18 45%, #040508 100%) fixed !important;
+  color: #f5f5f7 !important;
+}
+
+[data-theme="glass"] #hero,
+[data-theme="glass"] #statement,
+[data-theme="glass"] #work,
+[data-theme="glass"] #capabilities,
+[data-theme="glass"] #about,
+[data-theme="glass"] #contact {
+  background: transparent !important;
 }
 
 [data-theme="glass"] .work__card,
 [data-theme="glass"] .cert-card,
 [data-theme="glass"] .review-card,
 [data-theme="glass"] .icon-item {
-  background: var(--glass-bg) !important;
-  backdrop-filter: blur(24px) saturate(190%) !important;
-  -webkit-backdrop-filter: blur(24px) saturate(190%) !important;
-  border: 1px solid var(--glass-border) !important;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), inset 0 1px 0 var(--glass-specular) !important;
+  background: var(--glass-surface) !important;
+  backdrop-filter: blur(40px) saturate(210%) brightness(108%) !important;
+  -webkit-backdrop-filter: blur(40px) saturate(210%) brightness(108%) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.35) !important;
+  border-left: 1px solid rgba(255, 255, 255, 0.18) !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  border-radius: 20px !important;
+  box-shadow: var(--glass-shadow) !important;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, border-color 0.35s ease !important;
+}
+
+[data-theme="glass"] .work__card:hover,
+[data-theme="glass"] .cert-card:hover,
+[data-theme="glass"] .review-card:hover,
+[data-theme="glass"] .icon-item:hover {
+  background: var(--glass-surface-hover) !important;
+  transform: translateY(-4px) scale(1.01) !important;
+  border-top-color: rgba(255, 255, 255, 0.6) !important;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.65), inset 0 1px 2px 0 rgba(255, 255, 255, 0.7), inset 0 0 0 1px rgba(255, 74, 28, 0.35) !important;
 }
 
 [data-theme="glass"] .nav {
-  backdrop-filter: blur(20px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  backdrop-filter: blur(32px) saturate(200%) !important;
+  -webkit-backdrop-filter: blur(32px) saturate(200%) !important;
+  background: rgba(8, 10, 16, 0.45) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
 }
 
 

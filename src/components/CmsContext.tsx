@@ -531,24 +531,27 @@ export function CmsProvider({ children }: { children: ReactNode }) {
 
     if (isGlass) {
       root.setAttribute("data-theme", "glass");
-      root.style.setProperty("--paper", overrides.colors["--paper"] || "#08090d");
+      root.style.setProperty("--paper-bg", "#06070a");
+      root.style.setProperty("--paper", overrides.colors["--paper"] || "#f5f5f7");
       root.style.setProperty("--ink", overrides.colors["--ink"] || "#f5f5f7");
       root.style.setProperty("--vermilion", overrides.colors["--vermilion"] || "#FF453A");
       root.style.setProperty("--ink-40", overrides.colors["--ink-40"] || "rgba(245, 245, 247, 0.55)");
       root.style.setProperty("--ink-10", overrides.colors["--ink-10"] || "rgba(255, 255, 255, 0.12)");
-      root.style.setProperty("--dark-section-bg", "rgba(255, 255, 255, 0.04)");
+      root.style.setProperty("--dark-section-bg", "rgba(255, 255, 255, 0.02)");
       root.style.setProperty("--dark-section-text", "#f5f5f7");
     } else {
       root.removeAttribute("data-theme");
       if (isDark) {
-        root.style.setProperty("--paper", overrides.colors["--paper"] || "#0c0d10");
-        root.style.setProperty("--ink", overrides.colors["--ink"] || "#f1f3f7");
+        root.style.setProperty("--paper-bg", overrides.colors["--paper-bg"] || "#090a0d");
+        root.style.setProperty("--paper", overrides.colors["--paper"] || "#f5f3ef");
+        root.style.setProperty("--ink", overrides.colors["--ink"] || "#f5f5f7");
         root.style.setProperty("--vermilion", overrides.colors["--vermilion"] || "#ff4a1c");
-        root.style.setProperty("--ink-40", overrides.colors["--ink-40"] || "rgba(241, 243, 247, 0.45)");
-        root.style.setProperty("--ink-10", overrides.colors["--ink-10"] || "rgba(241, 243, 247, 0.08)");
-        root.style.setProperty("--dark-section-bg", "#121318");
-        root.style.setProperty("--dark-section-text", "#f1f3f7");
+        root.style.setProperty("--ink-40", overrides.colors["--ink-40"] || "rgba(245, 243, 239, 0.5)");
+        root.style.setProperty("--ink-10", overrides.colors["--ink-10"] || "rgba(255, 255, 255, 0.1)");
+        root.style.setProperty("--dark-section-bg", "#0d0f14");
+        root.style.setProperty("--dark-section-text", "#f5f5f7");
       } else {
+        root.style.setProperty("--paper-bg", overrides.colors["--paper-bg"] || "#EFEBE3");
         root.style.setProperty("--paper", overrides.colors["--paper"] || "#EFEBE3");
         root.style.setProperty("--ink", overrides.colors["--ink"] || "#111111");
         root.style.setProperty("--vermilion", overrides.colors["--vermilion"] || "#FF4A1C");

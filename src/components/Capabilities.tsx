@@ -82,7 +82,8 @@ export default function Capabilities() {
       aria-label="Capabilities"
       style={{
         padding: "clamp(5rem, 10vh, 8rem) clamp(1.5rem, 5vw, 5rem)",
-        background: "var(--paper)",
+        background: "var(--paper-bg, var(--paper))",
+        transition: "background-color 0.35s ease",
         overflow: "hidden",
       }}
     >
