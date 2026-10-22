@@ -14,6 +14,8 @@
   --vermilion: #FF4A1C;
   --ink-40:  rgba(17, 17, 17, 0.4);
   --ink-10:  rgba(17, 17, 17, 0.08);
+  --dark-section-bg: #111111;
+  --dark-section-text: #EFEBE3;
 
   /* Typography */
   --font-display: var(--font-display, 'Bricolage Grotesque', sans-serif);
@@ -50,6 +52,7 @@ html {
   overflow-x: hidden;
   /* Lenis smooth scroll target */
   scroll-behavior: auto;
+  transition: background-color 0.35s ease, color 0.35s ease;
 }
 
 body {
@@ -57,6 +60,7 @@ body {
   min-height: 100dvh;
   cursor: default; /* Native OS cursor is always visible and reliable */
   overflow-x: hidden;
+  transition: background-color 0.35s ease, color 0.35s ease;
 }
 
 /* Ensure all interactive elements have visible pointer cursor */
@@ -492,4 +496,32 @@ section {
     transform: translateY(-4px);
   }
 }
+
+/* ── Apple Liquid Glass Theme ──────────────────────────────── */
+[data-theme="glass"] {
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.14);
+  --glass-specular: rgba(255, 255, 255, 0.22);
+}
+
+[data-theme="glass"] body {
+  background: radial-gradient(circle at 50% 0%, #171b26 0%, #07080c 100%) fixed !important;
+}
+
+[data-theme="glass"] .work__card,
+[data-theme="glass"] .cert-card,
+[data-theme="glass"] .review-card,
+[data-theme="glass"] .icon-item {
+  background: var(--glass-bg) !important;
+  backdrop-filter: blur(24px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(190%) !important;
+  border: 1px solid var(--glass-border) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), inset 0 1px 0 var(--glass-specular) !important;
+}
+
+[data-theme="glass"] .nav {
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+}
+
 

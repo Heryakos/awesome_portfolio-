@@ -16,6 +16,7 @@ const COLOR_TOKENS = [
 const THEME_PRESETS = [
   {
     name: "Classic Warm",
+    presetId: "classic",
     colors: {
       "--paper": "#EFEBE3",
       "--ink": "#111111",
@@ -27,6 +28,7 @@ const THEME_PRESETS = [
   },
   {
     name: "Obsidian Cyber",
+    presetId: "obsidian",
     colors: {
       "--paper": "#0c0d10",
       "--ink": "#f1f3f7",
@@ -38,6 +40,7 @@ const THEME_PRESETS = [
   },
   {
     name: "Minimal Ivory",
+    presetId: "ivory",
     colors: {
       "--paper": "#FBF9F4",
       "--ink": "#151515",
@@ -49,6 +52,7 @@ const THEME_PRESETS = [
   },
   {
     name: "Bronze Studio",
+    presetId: "bronze",
     colors: {
       "--paper": "#141312",
       "--ink": "#eae6df",
@@ -60,6 +64,7 @@ const THEME_PRESETS = [
   },
   {
     name: "Velvet Navy",
+    presetId: "navy",
     colors: {
       "--paper": "#0b111e",
       "--ink": "#eaf0f8",
@@ -70,7 +75,20 @@ const THEME_PRESETS = [
     bg: "#0b111e",
   },
   {
+    name: "Apple Liquid Glass",
+    presetId: "apple-glass",
+    colors: {
+      "--paper": "#08090d",
+      "--ink": "#f5f5f7",
+      "--vermilion": "#FF453A",
+      "--ink-40": "rgba(245, 245, 247, 0.55)",
+    },
+    dot: "#38bdf8",
+    bg: "#08090d",
+  },
+  {
     name: "Swiss Mono",
+    presetId: "swiss-mono",
     colors: {
       "--paper": "#ffffff",
       "--ink": "#0a0a0a",
@@ -547,6 +565,57 @@ export default function CmsEditor() {
         {/* ── THEMES TAB ── */}
         {activeTab === "colors" && (
           <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            {/* Color Mode Switch (Light / Dark / Auto) */}
+            <div>
+              <span
+                style={{
+                  fontSize: "0.64rem",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.08em",
+                  color: "#888",
+                  fontWeight: 700,
+                  display: "block",
+                  marginBottom: 8,
+                }}
+              >
+                Display Mode
+              </span>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 6 }}>
+                {[
+                  { id: "light", label: "Light ☀️" },
+                  { id: "dark", label: "Dark 🌙" },
+                  { id: "system", label: "Auto 💻" },
+                ].map((m) => {
+                  const isCurrent =
+                    (m.id === "system" && (!cms.overrides.themeMode || cms.overrides.themeMode === "system")) ||
+                    cms.overrides.themeMode === m.id;
+                  return (
+                    <button
+                      key={m.id}
+                      type="button"
+                      onClick={() => cms.setThemeMode(m.id as any)}
+                      style={{
+                        padding: "8px 6px",
+                        background: isCurrent ? "rgba(255, 74, 28, 0.16)" : "rgba(255, 255, 255, 0.03)",
+                        border: isCurrent ? "1px solid #FF4A1C" : "1px solid rgba(255, 255, 255, 0.08)",
+                        borderRadius: 6,
+                        color: isCurrent ? "#FF4A1C" : "#ccc",
+                        fontSize: "0.66rem",
+                        fontWeight: isCurrent ? 700 : 500,
+                        cursor: "pointer",
+                        textAlign: "center",
+                        transition: "all 0.2s",
+                      }}
+                    >
+                      {m.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div style={{ height: 1, background: "rgba(255,255,255,0.06)" }} />
+
             <div>
               <span
                 style={{
@@ -562,45 +631,46 @@ export default function CmsEditor() {
                 1-Click Designer Themes
               </span>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
-                {THEME_PRESETS.map((preset) => (
-                  <button
-                    key={preset.name}
-                    onClick={() => {
-                      Object.entries(preset.colors).forEach(([k, v]) => {
-                        cms.setOverride("colors", k, v);
-                      });
-                      cms.showToast(`Applied ${preset.name} theme!`);
-                    }}
-                    style={{
-                      padding: "8px",
-                      background: "rgba(255, 255, 255, 0.03)",
-                      border: "1px solid rgba(255, 255, 255, 0.08)",
-                      borderRadius: 8,
-                      color: "#ddd",
-                      fontSize: "0.65rem",
-                      cursor: "pointer",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 8,
-                      textAlign: "left",
-                      transition: "border-color 0.2s",
-                    }}
-                  >
-                    <span
-                      style={{
-                        width: 14,
-                        height: 14,
-                        borderRadius: "50%",
-                        background: preset.dot,
-                        boxShadow: `0 0 0 2px ${preset.bg}`,
-                        border: "1px solid rgba(255,255,255,0.2)",
-                        display: "inline-block",
-                        flexShrink: 0,
+                {THEME_PRESETS.map((preset) => {
+                  const isGlass = preset.presetId === "apple-glass";
+                  return (
+                    <button
+                      key={preset.name}
+                      onClick={() => {
+                        cms.setThemePreset(preset.presetId || preset.name, preset.colors);
+                        cms.showToast(`Applied ${preset.name} theme!`);
                       }}
-                    />
-                    <span style={{ fontWeight: 600 }}>{preset.name}</span>
-                  </button>
-                ))}
+                      style={{
+                        padding: "8px",
+                        background: isGlass ? "rgba(56, 189, 248, 0.08)" : "rgba(255, 255, 255, 0.03)",
+                        border: isGlass ? "1px solid rgba(56, 189, 248, 0.35)" : "1px solid rgba(255, 255, 255, 0.08)",
+                        borderRadius: 8,
+                        color: isGlass ? "#7dd3fc" : "#ddd",
+                        fontSize: "0.65rem",
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 8,
+                        textAlign: "left",
+                        transition: "border-color 0.2s",
+                      }}
+                    >
+                      <span
+                        style={{
+                          width: 14,
+                          height: 14,
+                          borderRadius: "50%",
+                          background: preset.dot,
+                          boxShadow: `0 0 0 2px ${preset.bg}`,
+                          border: "1px solid rgba(255,255,255,0.2)",
+                          display: "inline-block",
+                          flexShrink: 0,
+                        }}
+                      />
+                      <span style={{ fontWeight: 600 }}>{preset.name}</span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
@@ -1653,6 +1723,7 @@ export default function CmsEditor() {
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
                 {[
                   { id: "obsidian", label: "Obsidian Glass", icon: "🖤" },
+                  { id: "glass", label: "Apple Liquid Glass", icon: "💎" },
                   { id: "vermilion", label: "Liquid Vermilion", icon: "🧡" },
                   { id: "gold", label: "Brushed Gold", icon: "👑" },
                   { id: "chrome", label: "Liquid Chrome", icon: "🪞" },

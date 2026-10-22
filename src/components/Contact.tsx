@@ -79,8 +79,8 @@ export default function Contact() {
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        background: "var(--ink)",
-        color: "var(--paper)",
+        background: "var(--dark-section-bg, var(--ink))",
+        color: "var(--dark-section-text, var(--paper))",
         overflow: "hidden",
         position: "relative",
       }}

@@ -4,11 +4,14 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { SITE } from "../../content/site";
+import { useCms } from "./CmsContext";
 
 export default function Nav() {
   const navRef = useRef<HTMLElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
+  const cms = useCms();
+  const isDark = cms.themeMode === "dark" || cms.overrides.themePreset === "apple-glass";
 
   // Are we on a case study page?
   const isCaseStudy = pathname?.startsWith("/work/");
@@ -144,6 +147,39 @@ export default function Nav() {
                 </a>
               </li>
             ))}
+            {/* Dark / Light Mode Switch */}
+            <li key="theme-toggle" style={{ marginLeft: "0.2rem" }}>
+              <button
+                type="button"
+                onClick={cms.toggleThemeMode}
+                className="nav__link"
+                title={isDark ? "Switch to Light Mode ☀️" : "Switch to Dark Mode 🌙"}
+                aria-label={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
+                style={{
+                  background: "transparent",
+                  border: "none",
+                  cursor: "pointer",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "0.85rem",
+                  padding: "0 0.25rem",
+                  lineHeight: 1,
+                  opacity: 0.8,
+                  transition: "opacity 0.2s, transform 0.2s",
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLElement).style.opacity = "1";
+                  (e.currentTarget as HTMLElement).style.transform = "scale(1.2)";
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLElement).style.opacity = "0.8";
+                  (e.currentTarget as HTMLElement).style.transform = "scale(1)";
+                }}
+              >
+                {isDark ? "☀️" : "🌙"}
+              </button>
+            </li>
             <li key="admin-nav" style={{ marginLeft: "0.4rem" }}>
               <Link
                 href="/admin"
@@ -172,42 +208,66 @@ export default function Nav() {
 
         {/* On case study — single clean "← All Projects" return button (desktop & mobile) */}
         {isCaseStudy && (
-          <Link
-            href="/#work"
-            className="nav__back-link"
-            aria-label="Back to all projects"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "0.45rem",
-              padding: "0.45rem 0.95rem",
-              background: "rgba(239, 235, 227, 0.08)",
-              backdropFilter: "blur(8px)",
-              border: "1px solid rgba(239, 235, 227, 0.22)",
-              borderRadius: "999px",
-              color: "#EFEBE3",
-              textDecoration: "none",
-              fontFamily: "var(--font-mono)",
-              fontSize: "0.72rem",
-              fontWeight: 600,
-              letterSpacing: "0.08em",
-              textTransform: "uppercase",
-              transition: "all 0.2s ease",
-            }}
-            onMouseEnter={(e) => {
-              (e.currentTarget as HTMLElement).style.background = "var(--vermilion)";
-              (e.currentTarget as HTMLElement).style.borderColor = "var(--vermilion)";
-              (e.currentTarget as HTMLElement).style.color = "#fff";
-            }}
-            onMouseLeave={(e) => {
-              (e.currentTarget as HTMLElement).style.background = "rgba(239, 235, 227, 0.08)";
-              (e.currentTarget as HTMLElement).style.borderColor = "rgba(239, 235, 227, 0.22)";
-              (e.currentTarget as HTMLElement).style.color = "#EFEBE3";
-            }}
-          >
-            <span>←</span>
-            <span>All Projects</span>
-          </Link>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+            <button
+              type="button"
+              onClick={cms.toggleThemeMode}
+              title={isDark ? "Switch to Light Mode ☀️" : "Switch to Dark Mode 🌙"}
+              aria-label={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: 32,
+                height: 32,
+                background: "rgba(239, 235, 227, 0.08)",
+                backdropFilter: "blur(8px)",
+                border: "1px solid rgba(239, 235, 227, 0.22)",
+                borderRadius: "999px",
+                cursor: "pointer",
+                fontSize: "0.85rem",
+                transition: "all 0.2s ease",
+              }}
+            >
+              {isDark ? "☀️" : "🌙"}
+            </button>
+            <Link
+              href="/#work"
+              className="nav__back-link"
+              aria-label="Back to all projects"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.45rem",
+                padding: "0.45rem 0.95rem",
+                background: "rgba(239, 235, 227, 0.08)",
+                backdropFilter: "blur(8px)",
+                border: "1px solid rgba(239, 235, 227, 0.22)",
+                borderRadius: "999px",
+                color: "#EFEBE3",
+                textDecoration: "none",
+                fontFamily: "var(--font-mono)",
+                fontSize: "0.72rem",
+                fontWeight: 600,
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+                transition: "all 0.2s ease",
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLElement).style.background = "var(--vermilion)";
+                (e.currentTarget as HTMLElement).style.borderColor = "var(--vermilion)";
+                (e.currentTarget as HTMLElement).style.color = "#fff";
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.background = "rgba(239, 235, 227, 0.08)";
+                (e.currentTarget as HTMLElement).style.borderColor = "rgba(239, 235, 227, 0.22)";
+                (e.currentTarget as HTMLElement).style.color = "#EFEBE3";
+              }}
+            >
+              <span>←</span>
+              <span>All Projects</span>
+            </Link>
+          </div>
         )}
 
         {/* Mobile toggle — only on home */}
@@ -309,11 +369,48 @@ export default function Nav() {
             </li>
           ))}
 
-          {/* Design Studio / Admin Button */}
+          {/* Mobile Theme Toggle Button */}
           <li
             className="menu__item"
             style={{
               marginTop: "0.8rem",
+              transform: menuOpen ? "translateY(0)" : "translateY(16px)",
+              opacity: menuOpen ? 1 : 0,
+              transition: "all 0.35s ease 0.25s",
+            }}
+          >
+            <button
+              type="button"
+              onClick={() => {
+                cms.toggleThemeMode();
+              }}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 8,
+                padding: "8px 16px",
+                background: "rgba(239, 235, 227, 0.08)",
+                border: "1px solid rgba(239, 235, 227, 0.2)",
+                borderRadius: 999,
+                color: "#EFEBE3",
+                fontFamily: "var(--font-mono)",
+                fontSize: "0.72rem",
+                fontWeight: 600,
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+                cursor: "pointer",
+              }}
+            >
+              <span>{isDark ? "☀️" : "🌙"}</span>
+              <span>{isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}</span>
+            </button>
+          </li>
+
+          {/* Design Studio / Admin Button */}
+          <li
+            className="menu__item"
+            style={{
+              marginTop: "0.5rem",
               transform: menuOpen ? "translateY(0)" : "translateY(16px)",
               opacity: menuOpen ? 1 : 0,
               transition: "all 0.35s ease 0.3s",

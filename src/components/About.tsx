@@ -311,8 +311,8 @@ export default function About() {
       ref={sectionRef}
       aria-label="About Yeab Addis"
       style={{
-        background: "var(--ink)",
-        color: "var(--paper)",
+        background: "var(--dark-section-bg, var(--ink))",
+        color: "var(--dark-section-text, var(--paper))",
         padding: "clamp(5rem, 10vh, 8rem) clamp(1.5rem, 5vw, 5rem)",
         overflow: "hidden",
       }}

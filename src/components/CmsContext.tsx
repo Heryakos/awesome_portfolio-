@@ -35,7 +35,7 @@ export interface CertItem {
 }
 
 export interface EffectsState {
-  yMaterial?: "obsidian" | "vermilion" | "gold" | "chrome" | "wireframe";
+  yMaterial?: "obsidian" | "vermilion" | "gold" | "chrome" | "wireframe" | "glass";
   ySpeed?: number;
   showHearts?: boolean;
 }
@@ -53,6 +53,8 @@ export interface CmsOverrides {
   hiddenReviews?: string[];
   customReviews?: any[];
   effects?: EffectsState;
+  themeMode?: "light" | "dark" | "system";
+  themePreset?: string;
 }
 
 interface CmsState {
@@ -90,6 +92,10 @@ interface CmsActions {
   resetAll: () => void;
   exportOverrides: () => string;
   importOverrides: (json: string) => boolean;
+  themeMode: "light" | "dark";
+  toggleThemeMode: () => void;
+  setThemeMode: (mode: "light" | "dark" | "system") => void;
+  setThemePreset: (presetId: string, colors: Record<string, string>) => void;
 }
 
 type CmsContextType = CmsState & CmsActions;
@@ -135,6 +141,7 @@ export function CmsProvider({ children }: { children: ReactNode }) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [overrides, setOverrides] = useState<CmsOverrides>(emptyOverrides);
   const [toast, setToast] = useState<string | null>(null);
+  const [themeMode, setThemeModeState] = useState<"light" | "dark">("light");
 
   const showToast = useCallback((msg: string) => {
     setToast(msg);
@@ -147,6 +154,7 @@ export function CmsProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
+      let loadedThemeMode: "light" | "dark" | "system" | undefined;
       if (saved) {
         const parsed = JSON.parse(saved);
         setOverrides({
@@ -154,13 +162,33 @@ export function CmsProvider({ children }: { children: ReactNode }) {
           ...parsed,
           effects: { ...emptyOverrides.effects, ...(parsed.effects || {}) },
         });
+        loadedThemeMode = parsed.themeMode;
       }
+
+      if (loadedThemeMode === "dark" || loadedThemeMode === "light") {
+        setThemeModeState(loadedThemeMode);
+      } else if (typeof window !== "undefined") {
+        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        setThemeModeState(prefersDark ? "dark" : "light");
+      }
+
       const auth = sessionStorage.getItem(AUTH_KEY);
       if (auth === "true") setIsAuth(true);
     } catch {
       /* first visit or private mode */
     }
   }, []);
+
+  // ── Listen to system theme changes ────────────────────
+  useEffect(() => {
+    if (overrides.themeMode === "dark" || overrides.themeMode === "light") return;
+    const mql = window.matchMedia("(prefers-color-scheme: dark)");
+    const handler = (e: MediaQueryListEvent) => {
+      setThemeModeState(e.matches ? "dark" : "light");
+    };
+    mql.addEventListener("change", handler);
+    return () => mql.removeEventListener("change", handler);
+  }, [overrides.themeMode]);
 
   // ── Persist overrides to localStorage ──────────────────
   const persistOverrides = useCallback((next: CmsOverrides) => {
@@ -418,9 +446,118 @@ export function CmsProvider({ children }: { children: ReactNode }) {
     [persistOverrides, showToast]
   );
 
+  const toggleThemeMode = useCallback(() => {
+    const next = themeMode === "dark" ? "light" : "dark";
+    setThemeModeState(next);
+    setOverrides((prev) => {
+      const updated: CmsOverrides = {
+        ...prev,
+        themeMode: next,
+        themePreset: next === "dark" ? "obsidian" : "classic",
+        colors: {},
+      };
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      } catch {}
+      return updated;
+    });
+    showToast(next === "dark" ? "Switched to Dark Mode 🌙" : "Switched to Light Mode ☀️");
+  }, [themeMode, showToast]);
+
+  const setThemeMode = useCallback(
+    (mode: "light" | "dark" | "system") => {
+      if (mode === "system") {
+        const prefersDark =
+          typeof window !== "undefined" &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches;
+        setThemeModeState(prefersDark ? "dark" : "light");
+      } else {
+        setThemeModeState(mode);
+      }
+      setOverrides((prev) => {
+        const updated: CmsOverrides = {
+          ...prev,
+          themeMode: mode,
+          themePreset: mode === "dark" ? "obsidian" : "classic",
+          colors: {},
+        };
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+        } catch {}
+        return updated;
+      });
+      showToast(
+        mode === "system"
+          ? "Switched to Auto System Theme 💻"
+          : mode === "dark"
+          ? "Switched to Dark Mode 🌙"
+          : "Switched to Light Mode ☀️"
+      );
+    },
+    [showToast]
+  );
+
+  const setThemePreset = useCallback(
+    (presetId: string, colors: Record<string, string>) => {
+      const isGlass = presetId === "apple-glass";
+      if (isGlass) setThemeModeState("dark");
+      setOverrides((prev) => {
+        const updated: CmsOverrides = {
+          ...prev,
+          themePreset: presetId,
+          themeMode: isGlass ? "dark" : prev.themeMode,
+          colors: { ...prev.colors, ...colors },
+          effects: isGlass
+            ? { ...(prev.effects || {}), yMaterial: "glass" }
+            : prev.effects,
+        };
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+        } catch {}
+        return updated;
+      });
+    },
+    []
+  );
+
   // ── Apply overrides to CSS custom properties ──────────
   useEffect(() => {
     const root = document.documentElement;
+
+    const isGlass = overrides.themePreset === "apple-glass";
+    const isDark = themeMode === "dark" || isGlass;
+
+    root.setAttribute("data-theme-mode", isDark ? "dark" : "light");
+
+    if (isGlass) {
+      root.setAttribute("data-theme", "glass");
+      root.style.setProperty("--paper", overrides.colors["--paper"] || "#08090d");
+      root.style.setProperty("--ink", overrides.colors["--ink"] || "#f5f5f7");
+      root.style.setProperty("--vermilion", overrides.colors["--vermilion"] || "#FF453A");
+      root.style.setProperty("--ink-40", overrides.colors["--ink-40"] || "rgba(245, 245, 247, 0.55)");
+      root.style.setProperty("--ink-10", overrides.colors["--ink-10"] || "rgba(255, 255, 255, 0.12)");
+      root.style.setProperty("--dark-section-bg", "rgba(255, 255, 255, 0.04)");
+      root.style.setProperty("--dark-section-text", "#f5f5f7");
+    } else {
+      root.removeAttribute("data-theme");
+      if (isDark) {
+        root.style.setProperty("--paper", overrides.colors["--paper"] || "#0c0d10");
+        root.style.setProperty("--ink", overrides.colors["--ink"] || "#f1f3f7");
+        root.style.setProperty("--vermilion", overrides.colors["--vermilion"] || "#ff4a1c");
+        root.style.setProperty("--ink-40", overrides.colors["--ink-40"] || "rgba(241, 243, 247, 0.45)");
+        root.style.setProperty("--ink-10", overrides.colors["--ink-10"] || "rgba(241, 243, 247, 0.08)");
+        root.style.setProperty("--dark-section-bg", "#121318");
+        root.style.setProperty("--dark-section-text", "#f1f3f7");
+      } else {
+        root.style.setProperty("--paper", overrides.colors["--paper"] || "#EFEBE3");
+        root.style.setProperty("--ink", overrides.colors["--ink"] || "#111111");
+        root.style.setProperty("--vermilion", overrides.colors["--vermilion"] || "#FF4A1C");
+        root.style.setProperty("--ink-40", overrides.colors["--ink-40"] || "rgba(17, 17, 17, 0.4)");
+        root.style.setProperty("--ink-10", overrides.colors["--ink-10"] || "rgba(17, 17, 17, 0.08)");
+        root.style.setProperty("--dark-section-bg", "#111111");
+        root.style.setProperty("--dark-section-text", "#EFEBE3");
+      }
+    }
 
     Object.entries(overrides.colors).forEach(([key, value]) => {
       root.style.setProperty(key, value);
@@ -447,7 +584,7 @@ export function CmsProvider({ children }: { children: ReactNode }) {
         dedicationEl.style.display = "none";
       }
     }
-  }, [overrides]);
+  }, [overrides, themeMode]);
 
   return (
     <CmsContext.Provider
@@ -479,6 +616,10 @@ export function CmsProvider({ children }: { children: ReactNode }) {
         resetAll,
         exportOverrides,
         importOverrides,
+        themeMode,
+        toggleThemeMode,
+        setThemeMode,
+        setThemePreset,
       }}
     >
       {children}
