@@ -73,6 +73,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body
         className={`${bricolage.variable} ${instrumentSerif.variable} ${jetbrainsMono.variable} antialiased`}
+        suppressHydrationWarning
       >
         {/*
           ClientProviders mounts:
