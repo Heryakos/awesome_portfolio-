@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#181922"/>
+      <stop offset="100%" stop-color="#0c0d12"/>
+    </linearGradient>
+    <linearGradient id="vermilionGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF5A2C"/>
+      <stop offset="100%" stop-color="#E63900"/>
+    </linearGradient>
+    <linearGradient id="ivoryGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#EAE5DA"/>
+    </linearGradient>
+    <filter id="subtleGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000000" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+
+  <!-- Squircle Base -->
+  <rect x="2" y="2" width="60" height="60" rx="14" ry="14" fill="url(#bgGrad)" stroke="rgba(255,255,255,0.12)" stroke-width="1.2"/>
+
+  <!-- Geometric Y Monogram -->
+  <g filter="url(#subtleGlow)">
+    <!-- Left Arm (Vermilion Red Geometric) -->
+    <path d="M 17 18 L 26 18 L 32 30 L 26 36 L 17 25 Z" fill="url(#vermilionGrad)"/>
+    <path d="M 22 21 L 24.5 21 L 28.5 29 L 26 31 Z" fill="#12131A"/>
+
+    <!-- Right Arm (Ivory White Facet) -->
+    <path d="M 47 18 L 38 18 L 32 30 L 36 36 L 47 21 Z" fill="url(#ivoryGrad)"/>
+    <path d="M 42 22 L 39.5 22 L 35 30 L 37 32 Z" fill="#12131A"/>
+
+    <!-- Central Stem (Vermilion Red Solid Pillar) -->
+    <path d="M 28 32 L 36 32 L 36 48 L 28 48 Z" fill="url(#vermilionGrad)"/>
+    
+    <!-- Accent Highlight Bevel -->
+    <path d="M 32 32 L 36 32 L 36 48 L 32 48 Z" fill="rgba(0,0,0,0.22)"/>
+    <path d="M 28 32 L 32 32 L 32 48 L 28 48 Z" fill="rgba(255,255,255,0.18)"/>
+
+    <!-- Small signature vermilion dot -->
+    <circle cx="47" cy="18" r="2.5" fill="#FF4A1C"/>
+  </g>
+</svg>

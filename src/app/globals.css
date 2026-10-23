@@ -499,16 +499,45 @@ section {
 
 /* ── Dark Mode Typography & Contrast Rules ────────────────── */
 html[data-theme-mode="dark"] {
-  --paper-bg: #090a0d;
-  --paper: #f5f3ef;
-  --ink: #f5f5f7;
-  --dark-section-bg: #0d0f14;
-  --dark-section-text: #f5f5f7;
+  --paper-bg: #0c0e18;
+  --paper: #eae8e2;
+  --ink: #f0f0f5;
+  --vermilion: #ff5a34;
+  --ink-40: rgba(240, 240, 245, 0.5);
+  --ink-10: rgba(255, 255, 255, 0.1);
+  --dark-section-bg: #141826;
+  --dark-section-text: #f0f0f5;
 }
+
+/* Dark mode section separation & elevation */
+html[data-theme-mode="dark"] .about,
+html[data-theme-mode="dark"] .contact {
+  background: var(--dark-section-bg) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
+}
+
+html[data-theme-mode="dark"] .statement {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+html[data-theme-mode="dark"] .work {
+  background: var(--paper-bg) !important;
+}
+
+html[data-theme-mode="dark"] .capabilities {
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+/* Dark mode scrollbar */
+html[data-theme-mode="dark"]::-webkit-scrollbar-track { background: #0c0e18; }
+html[data-theme-mode="dark"]::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); }
+
+/* Dark mode text contrast */
+html[data-theme-mode="dark"] .t-label { color: rgba(240, 240, 245, 0.45); }
 
 html[data-theme-mode="dark"] #contact .t-label,
 html[data-theme-mode="dark"] #about .t-label {
-  color: var(--paper);
+  color: rgba(240, 240, 245, 0.45);
 }
 
 html[data-theme-mode="dark"] #contact h2,
@@ -517,21 +546,64 @@ html[data-theme-mode="dark"] #about h3 {
   color: var(--paper);
 }
 
-/* ── Apple Liquid Glass Theme (visionOS Luxury Aesthetic) ──── */
-[data-theme="glass"] {
-  --paper-bg: #050609;
-  --glass-surface: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
-  --glass-surface-hover: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.04) 100%);
-  --glass-border: rgba(255, 255, 255, 0.14);
-  --glass-highlight: rgba(255, 255, 255, 0.45);
-  --glass-shadow: 0 20px 50px rgba(0, 0, 0, 0.55), inset 0 1px 1px 0 rgba(255, 255, 255, 0.45), inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+/* Dark mode capabilities list row separator */
+html[data-theme-mode="dark"] .capabilities li {
+  border-color: rgba(255, 255, 255, 0.08) !important;
 }
 
+/* Dark mode selection */
+html[data-theme-mode="dark"] ::selection {
+  background: var(--vermilion);
+  color: #fff;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   APPLE LIQUID GLASS THEME — visionOS Luxury Aesthetic
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Shimmer animation for glass surfaces */
+@keyframes glassShimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes glassGlow {
+  0%, 100% { opacity: 0.3; }
+  50%      { opacity: 0.7; }
+}
+
+[data-theme="glass"] {
+  --paper-bg: #050609;
+  --paper: #f5f5f7;
+  --ink: #f5f5f7;
+  --vermilion: #FF453A;
+  --ink-40: rgba(245, 245, 247, 0.55);
+  --ink-10: rgba(255, 255, 255, 0.12);
+  --dark-section-bg: transparent;
+  --dark-section-text: #f5f5f7;
+
+  /* Glass tokens */
+  --glass-blur: 40px;
+  --glass-surface: rgba(255, 255, 255, 0.05);
+  --glass-surface-hover: rgba(255, 255, 255, 0.09);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --glass-highlight: rgba(255, 255, 255, 0.35);
+  --glass-shadow-dark: rgba(0, 0, 0, 0.5);
+}
+
+/* Cosmic depth background */
 [data-theme="glass"] body {
-  background: radial-gradient(circle at 50% 10%, #151a2e 0%, #0a0d18 45%, #040508 100%) fixed !important;
+  background:
+    radial-gradient(ellipse 120% 60% at 50% 0%,   rgba(30, 40, 80, 0.45) 0%, transparent 60%),
+    radial-gradient(ellipse 80% 40%  at 80% 80%,   rgba(60, 20, 60, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 50%  at 15% 50%,   rgba(20, 40, 80, 0.12) 0%, transparent 50%),
+    linear-gradient(180deg, #08091a 0%, #040508 100%) !important;
+  background-attachment: fixed !important;
   color: #f5f5f7 !important;
 }
 
+/* All sections transparent to show cosmic bg */
 [data-theme="glass"] #hero,
 [data-theme="glass"] #statement,
 [data-theme="glass"] #work,
@@ -541,37 +613,132 @@ html[data-theme-mode="dark"] #about h3 {
   background: transparent !important;
 }
 
+/* Subtle section dividers */
+[data-theme="glass"] #statement,
+[data-theme="glass"] #about,
+[data-theme="glass"] #capabilities {
+  border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+/* ── Glass Cards: Multi-layer frosted glass ──────────────── */
 [data-theme="glass"] .work__card,
 [data-theme="glass"] .cert-card,
 [data-theme="glass"] .review-card,
 [data-theme="glass"] .icon-item {
+  position: relative;
   background: var(--glass-surface) !important;
-  backdrop-filter: blur(40px) saturate(210%) brightness(108%) !important;
-  -webkit-backdrop-filter: blur(40px) saturate(210%) brightness(108%) !important;
-  border-top: 1px solid rgba(255, 255, 255, 0.35) !important;
-  border-left: 1px solid rgba(255, 255, 255, 0.18) !important;
-  border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  backdrop-filter: blur(var(--glass-blur)) saturate(180%) brightness(105%) !important;
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%) brightness(105%) !important;
+  border: 1px solid var(--glass-border) !important;
+  border-top-color: rgba(255, 255, 255, 0.25) !important;
   border-radius: 20px !important;
-  box-shadow: var(--glass-shadow) !important;
-  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, border-color 0.35s ease !important;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    0 1px 0 0 rgba(255, 255, 255, 0.1) inset,
+    0 -1px 0 0 rgba(0, 0, 0, 0.15) inset !important;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
+/* Inner specular highlight (::before) */
+[data-theme="glass"] .work__card::before,
+[data-theme="glass"] .cert-card::before,
+[data-theme="glass"] .review-card::before {
+  content: "" !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: 1px !important;
+  background: linear-gradient(90deg, transparent 10%, rgba(255, 255, 255, 0.4) 50%, transparent 90%) !important;
+  z-index: 2 !important;
+  pointer-events: none !important;
+}
+
+/* Animated shimmer overlay (::after) */
+[data-theme="glass"] .work__card::after,
+[data-theme="glass"] .cert-card::after,
+[data-theme="glass"] .review-card::after {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  background: linear-gradient(
+    105deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.03) 45%,
+    rgba(255, 255, 255, 0.06) 50%,
+    rgba(255, 255, 255, 0.03) 55%,
+    transparent 70%
+  ) !important;
+  background-size: 200% 100% !important;
+  animation: glassShimmer 8s ease-in-out infinite !important;
+  pointer-events: none !important;
+  z-index: 1 !important;
+  border-radius: 20px !important;
+}
+
+/* Hover: intensified glass with vermilion accent glow */
 [data-theme="glass"] .work__card:hover,
 [data-theme="glass"] .cert-card:hover,
 [data-theme="glass"] .review-card:hover,
 [data-theme="glass"] .icon-item:hover {
   background: var(--glass-surface-hover) !important;
-  transform: translateY(-4px) scale(1.01) !important;
-  border-top-color: rgba(255, 255, 255, 0.6) !important;
-  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.65), inset 0 1px 2px 0 rgba(255, 255, 255, 0.7), inset 0 0 0 1px rgba(255, 74, 28, 0.35) !important;
+  transform: translateY(-3px) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  border-top-color: rgba(255, 255, 255, 0.45) !important;
+  box-shadow:
+    0 16px 48px rgba(0, 0, 0, 0.55),
+    0 0 24px rgba(255, 69, 58, 0.08),
+    0 1px 0 0 rgba(255, 255, 255, 0.15) inset !important;
 }
 
+/* ── Glass Navigation ────────────────────────────────────── */
 [data-theme="glass"] .nav {
-  backdrop-filter: blur(32px) saturate(200%) !important;
-  -webkit-backdrop-filter: blur(32px) saturate(200%) !important;
-  background: rgba(8, 10, 16, 0.45) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+  mix-blend-mode: normal !important;
+  backdrop-filter: blur(48px) saturate(200%) brightness(95%) !important;
+  -webkit-backdrop-filter: blur(48px) saturate(200%) brightness(95%) !important;
+  background: rgba(10, 12, 24, 0.55) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3) !important;
 }
 
+/* Fix nav text visibility in glass mode (no mix-blend-mode) */
+[data-theme="glass"] .nav__logo,
+[data-theme="glass"] .nav__link {
+  color: rgba(245, 245, 247, 0.9) !important;
+}
+
+[data-theme="glass"] .nav__link:hover {
+  color: #fff !important;
+}
+
+/* ── Glass Scrollbar ─────────────────────────────────────── */
+[data-theme="glass"]::-webkit-scrollbar-track { background: #050609; }
+[data-theme="glass"]::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 4px; }
+
+/* ── Glass Typography enhancements ───────────────────────── */
+[data-theme="glass"] .t-display,
+[data-theme="glass"] .t-hero {
+  text-shadow: 0 0 60px rgba(255, 255, 255, 0.04);
+}
+
+[data-theme="glass"] .text-vermilion {
+  text-shadow: 0 0 30px rgba(255, 69, 58, 0.2);
+}
+
+/* Glass section labels */
+[data-theme="glass"] .t-label {
+  color: rgba(245, 245, 247, 0.35) !important;
+}
+
+/* ── Glass selection ─────────────────────────────────────── */
+[data-theme="glass"] ::selection {
+  background: rgba(255, 69, 58, 0.5);
+  color: #fff;
+}
+
+/* ── Glass capabilities list ─────────────────────────────── */
+[data-theme="glass"] .capabilities li {
+  border-color: rgba(255, 255, 255, 0.06) !important;
+}
 

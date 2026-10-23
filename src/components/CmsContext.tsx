@@ -93,9 +93,11 @@ interface CmsActions {
   exportOverrides: () => string;
   importOverrides: (json: string) => boolean;
   themeMode: "light" | "dark";
+  activeTheme: "light" | "dark" | "glass";
   toggleThemeMode: () => void;
   setThemeMode: (mode: "light" | "dark" | "system") => void;
   setThemePreset: (presetId: string, colors: Record<string, string>) => void;
+  applyPublicTheme: (theme: "light" | "dark" | "glass") => void;
 }
 
 type CmsContextType = CmsState & CmsActions;
@@ -520,6 +522,77 @@ export function CmsProvider({ children }: { children: ReactNode }) {
     []
   );
 
+  const activeTheme: "light" | "dark" | "glass" =
+    overrides.themePreset === "apple-glass"
+      ? "glass"
+      : themeMode === "dark"
+      ? "dark"
+      : "light";
+
+  const applyPublicTheme = useCallback(
+    (target: "light" | "dark" | "glass") => {
+      if (target === "light") {
+        setThemeModeState("light");
+        setOverrides((prev) => {
+          const updated: CmsOverrides = {
+            ...prev,
+            themeMode: "light",
+            themePreset: "classic",
+            colors: {},
+            effects: { ...(prev.effects || {}), yMaterial: "obsidian" },
+          };
+          try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+          } catch {}
+          return updated;
+        });
+        showToast("Switched to Light (Paper) Mode ☀️");
+      } else if (target === "dark") {
+        setThemeModeState("dark");
+        setOverrides((prev) => {
+          const updated: CmsOverrides = {
+            ...prev,
+            themeMode: "dark",
+            themePreset: "obsidian",
+            colors: {},
+            effects: { ...(prev.effects || {}), yMaterial: "obsidian" },
+          };
+          try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+          } catch {}
+          return updated;
+        });
+        showToast("Switched to Dark (Obsidian) Mode 🌙");
+      } else if (target === "glass") {
+        setThemeModeState("dark");
+        setOverrides((prev) => {
+          const updated: CmsOverrides = {
+            ...prev,
+            themeMode: "dark",
+            themePreset: "apple-glass",
+            colors: {
+              "--paper-bg": "#06070a",
+              "--paper": "#f5f5f7",
+              "--ink": "#f5f5f7",
+              "--vermilion": "#FF453A",
+              "--ink-40": "rgba(245, 245, 247, 0.55)",
+              "--ink-10": "rgba(255, 255, 255, 0.12)",
+              "--dark-section-bg": "transparent",
+              "--dark-section-text": "#f5f5f7",
+            },
+            effects: { ...(prev.effects || {}), yMaterial: "glass" },
+          };
+          try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+          } catch {}
+          return updated;
+        });
+        showToast("Switched to Apple Liquid Glass ✨");
+      }
+    },
+    [showToast]
+  );
+
   // ── Apply overrides to CSS custom properties ──────────
   useEffect(() => {
     const root = document.documentElement;
@@ -542,14 +615,14 @@ export function CmsProvider({ children }: { children: ReactNode }) {
     } else {
       root.removeAttribute("data-theme");
       if (isDark) {
-        root.style.setProperty("--paper-bg", overrides.colors["--paper-bg"] || "#090a0d");
-        root.style.setProperty("--paper", overrides.colors["--paper"] || "#f5f3ef");
-        root.style.setProperty("--ink", overrides.colors["--ink"] || "#f5f5f7");
-        root.style.setProperty("--vermilion", overrides.colors["--vermilion"] || "#ff4a1c");
-        root.style.setProperty("--ink-40", overrides.colors["--ink-40"] || "rgba(245, 243, 239, 0.5)");
+        root.style.setProperty("--paper-bg", overrides.colors["--paper-bg"] || "#0c0e18");
+        root.style.setProperty("--paper", overrides.colors["--paper"] || "#eae8e2");
+        root.style.setProperty("--ink", overrides.colors["--ink"] || "#f0f0f5");
+        root.style.setProperty("--vermilion", overrides.colors["--vermilion"] || "#ff5a34");
+        root.style.setProperty("--ink-40", overrides.colors["--ink-40"] || "rgba(240, 240, 245, 0.5)");
         root.style.setProperty("--ink-10", overrides.colors["--ink-10"] || "rgba(255, 255, 255, 0.1)");
-        root.style.setProperty("--dark-section-bg", "#0d0f14");
-        root.style.setProperty("--dark-section-text", "#f5f5f7");
+        root.style.setProperty("--dark-section-bg", "#141826");
+        root.style.setProperty("--dark-section-text", "#f0f0f5");
       } else {
         root.style.setProperty("--paper-bg", overrides.colors["--paper-bg"] || "#EFEBE3");
         root.style.setProperty("--paper", overrides.colors["--paper"] || "#EFEBE3");
@@ -620,9 +693,11 @@ export function CmsProvider({ children }: { children: ReactNode }) {
         exportOverrides,
         importOverrides,
         themeMode,
+        activeTheme,
         toggleThemeMode,
         setThemeMode,
         setThemePreset,
+        applyPublicTheme,
       }}
     >
       {children}
