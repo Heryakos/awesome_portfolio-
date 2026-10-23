@@ -6,80 +6,82 @@ import * as THREE from "three";
 import { useMousePosition } from "@/hooks/useMousePosition";
 import { useCms } from "./CmsContext";
 
-// ── Bespoke Brand Favicon 3D Y Geometry ──────────────────────
-// Faithfully reproduces the architectural monogram with hollow negative-space windows
-function createBrandFaviconYShape(): THREE.Shape {
-  const shape = new THREE.Shape();
+// ── Unified Brand Favicon 3D Monogram Geometry ──────────────
+// Mathematically mapped from public/icon.svg (64x64 viewBox):
+// All parts share the exact same origin coordinate space so they interlock
+// with zero seams, zero gaps, and verified clockwise hole windings.
 
+function createLeftWingShape(): THREE.Shape {
+  const shape = new THREE.Shape();
   // Outer boundary (Counter-Clockwise)
-  // Base of stem
-  shape.moveTo(-0.28, -1.35);
-  shape.lineTo(0.28, -1.35);
-  
-  // Right side of stem
-  shape.lineTo(0.28, -0.05);
-  
-  // Right arm outer chevron diagonal
-  shape.lineTo(0.72, 0.48);
-  shape.lineTo(1.18, 1.35);
-  
-  // Right arm top flat edge
-  shape.lineTo(0.68, 1.35);
-  
-  // Right arm inner slope towards center crotch
-  shape.lineTo(0.25, 0.52);
-  shape.lineTo(0.0, 0.16);
-  
-  // Left arm inner slope towards center crotch
-  shape.lineTo(-0.25, 0.52);
-  shape.lineTo(-0.68, 1.35);
-  
-  // Left arm top flat edge
-  shape.lineTo(-1.18, 1.35);
-  
-  // Left arm outer chevron diagonal
-  shape.lineTo(-0.72, 0.48);
-  
-  // Left side of stem
-  shape.lineTo(-0.28, -0.05);
+  shape.moveTo(-1.125, 0.6);
+  shape.lineTo(-0.45, -0.225);
+  shape.lineTo(0.0, 0.225);
+  shape.lineTo(-0.45, 1.125);
+  shape.lineTo(-1.125, 1.125);
   shape.closePath();
 
-  // Hole 1: Left arm angular negative-space window (Clockwise)
-  const leftHole = new THREE.Path();
-  leftHole.moveTo(-0.92, 1.15);
-  leftHole.lineTo(-0.72, 1.15);
-  leftHole.lineTo(-0.48, 0.72);
-  leftHole.lineTo(-0.65, 0.52);
-  leftHole.closePath();
-  shape.holes.push(leftHole);
-
-  // Hole 2: Right arm angular negative-space window (Clockwise)
-  const rightHole = new THREE.Path();
-  rightHole.moveTo(0.72, 1.15);
-  rightHole.lineTo(0.92, 1.15);
-  rightHole.lineTo(0.65, 0.52);
-  rightHole.lineTo(0.48, 0.72);
-  rightHole.closePath();
-  shape.holes.push(rightHole);
-
-  // Hole 3: Stem vertical architectural slot (Clockwise)
-  const stemHole = new THREE.Path();
-  stemHole.moveTo(-0.09, -1.15);
-  stemHole.lineTo(-0.09, -0.15);
-  stemHole.lineTo(0.09, -0.15);
-  stemHole.lineTo(0.09, -1.15);
-  stemHole.closePath();
-  shape.holes.push(stemHole);
+  // Negative-space window hole (Clockwise)
+  const hole = new THREE.Path();
+  hole.moveTo(-0.75, 0.9);
+  hole.lineTo(-0.5625, 0.9);
+  hole.lineTo(-0.2625, 0.3);
+  hole.lineTo(-0.45, 0.15);
+  hole.closePath();
+  shape.holes.push(hole);
 
   return shape;
 }
 
-// ── Classic block Y shape (fallback if user wants classic) ────
+function createRightWingShape(): THREE.Shape {
+  const shape = new THREE.Shape();
+  // Outer boundary (Counter-Clockwise)
+  shape.moveTo(0.3, -0.225);
+  shape.lineTo(1.125, 0.9);
+  shape.lineTo(1.125, 1.125);
+  shape.lineTo(0.45, 1.125);
+  shape.lineTo(0.0, 0.225);
+  shape.closePath();
+
+  // Negative-space window hole (Clockwise: verified reversed winding)
+  const hole = new THREE.Path();
+  hole.moveTo(0.375, 0.075);
+  hole.lineTo(0.225, 0.225);
+  hole.lineTo(0.5625, 0.825);
+  hole.lineTo(0.75, 0.825);
+  hole.closePath();
+  shape.holes.push(hole);
+
+  return shape;
+}
+
+function createStemShape(): THREE.Shape {
+  const shape = new THREE.Shape();
+  // Outer boundary (Counter-Clockwise, chevron saddle interlocking flush with arms)
+  shape.moveTo(-0.3375, -1.125);
+  shape.lineTo(0.3375, -1.125);
+  shape.lineTo(0.3375, -0.281);
+  shape.lineTo(0.0, 0.225);
+  shape.lineTo(-0.3375, -0.1125);
+  shape.closePath();
+
+  // Negative-space vertical slot hole (Clockwise)
+  const hole = new THREE.Path();
+  hole.moveTo(-0.075, -0.15);
+  hole.lineTo(0.075, -0.15);
+  hole.lineTo(0.075, -0.9);
+  hole.lineTo(-0.075, -0.9);
+  hole.closePath();
+  shape.holes.push(hole);
+
+  return shape;
+}
+
+// ── Classic block Y shape (fallback in Design Studio) ────────
 function createClassicYShape(): THREE.Shape {
   const shape = new THREE.Shape();
   const t = 0.22; // stem half-width
 
-  // Y glyph: two arms going up-left and up-right, then a stem going down
   shape.moveTo(-t, -1.4);
   shape.lineTo(-t, -0.1);
   shape.lineTo(-1.05, 1.4);
@@ -94,10 +96,9 @@ function createClassicYShape(): THREE.Shape {
   return shape;
 }
 
-// ── The 3D Y mesh (Interactive Mouse/Touch Drag-to-Rotate) ────
+// ── The 3D Sculpture Mesh (Interactive Mouse/Touch Drag-to-Rotate) ──
 function YMesh() {
   const groupRef = useRef<THREE.Group>(null!);
-  const meshRef = useRef<THREE.Mesh>(null!);
   const mouse = useMousePosition();
   const { viewport } = useThree();
   const cms = useCms();
@@ -105,11 +106,11 @@ function YMesh() {
   const isDark = cms.themeMode === "dark" || cms.overrides.themePreset === "apple-glass";
   const isGlass = cms.overrides.themePreset === "apple-glass" || effects?.yMaterial === "glass";
   const yMaterial = isGlass ? "glass" : (effects?.yMaterial || "obsidian");
+  const yShapeType = effects?.yShape || "brand";
   const speedMult = effects?.ySpeed ?? 1.0;
 
   // Interaction & Physics state
   const isDragging = useRef(false);
-  const dragStartPos = useRef({ x: 0, y: 0 });
   const prevPointer = useRef({ x: 0, y: 0 });
   const userRotation = useRef({ x: 0, y: 0 });
   const rotVelocity = useRef({ x: 0, y: 0 });
@@ -121,29 +122,38 @@ function YMesh() {
   const [hovered, setHovered] = useState(false);
   const [active, setActive] = useState(false);
 
-  // Responsive scale: fits cleanly between text on mobile portrait & desktop
+  // Responsive scale: cleanly sized to breathe harmoniously with hero text
   const isMobile = viewport.width < 5;
-  const responsiveScale = isMobile ? Math.min(0.88, viewport.width / 4.4) : 1.15;
+  const responsiveScale = isMobile ? Math.min(0.85, viewport.width / 4.5) : 1.1;
   const posY = isMobile ? -0.15 : 0;
 
-  const geometry = useMemo(() => {
-    const yShapeType = effects?.yShape || "brand";
-    const shape = yShapeType === "classic" ? createClassicYShape() : createBrandFaviconYShape();
-    const extrudeSettings: THREE.ExtrudeGeometryOptions = {
-      depth: 0.38,
+  // Extrude settings for architectural bevels
+  const extrudeSettings: THREE.ExtrudeGeometryOptions = useMemo(
+    () => ({
+      depth: 0.34,
       bevelEnabled: true,
-      bevelThickness: 0.08,
-      bevelSize: 0.05,
+      bevelThickness: 0.05,
+      bevelSize: 0.035,
       bevelOffset: 0,
-      bevelSegments: 8, // Optimized 60fps
+      bevelSegments: 8,
       curveSegments: 16,
-    };
-    const geo = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+    }),
+    []
+  );
+
+  // Geometries for Brand Favicon parts (share identical origin for perfect fit)
+  const leftWingGeo = useMemo(() => new THREE.ExtrudeGeometry(createLeftWingShape(), extrudeSettings), [extrudeSettings]);
+  const rightWingGeo = useMemo(() => new THREE.ExtrudeGeometry(createRightWingShape(), extrudeSettings), [extrudeSettings]);
+  const stemGeo = useMemo(() => new THREE.ExtrudeGeometry(createStemShape(), extrudeSettings), [extrudeSettings]);
+
+  // Classic single block fallback geometry
+  const classicGeo = useMemo(() => {
+    const geo = new THREE.ExtrudeGeometry(createClassicYShape(), extrudeSettings);
     geo.center();
     return geo;
-  }, [effects?.yShape]);
+  }, [extrudeSettings]);
 
-  // Global window listeners for drag-to-rotate so dragging stays smooth anywhere on screen
+  // Global window listeners for drag-to-rotate
   useEffect(() => {
     const onPointerMove = (e: PointerEvent) => {
       if (!isDragging.current) return;
@@ -184,13 +194,12 @@ function YMesh() {
     e.stopPropagation();
     isDragging.current = true;
     setActive(true);
-    dragStartPos.current = { x: e.clientX, y: e.clientY };
     prevPointer.current = { x: e.clientX, y: e.clientY };
     rotVelocity.current = { x: 0, y: 0 };
     lastInteractTime.current = performance.now();
 
     // Tactile spring bounce on click
-    scaleVelocity.current = 0.35;
+    scaleVelocity.current = 0.32;
     document.body.style.cursor = "grabbing";
   };
 
@@ -206,10 +215,10 @@ function YMesh() {
     scaleVelocity.current += force * dt;
     scaleImpulse.current += scaleVelocity.current * dt;
 
-    // Organic continuous floating oscillation
-    const autoRotX = Math.sin(t * 0.7) * 0.12;
-    const autoRotY = Math.sin(t * 0.5) * 0.22;
-    const floatY = Math.sin(t * 1.1) * 0.08;
+    // Organic continuous floating oscillation (gentle forward-facing motion)
+    const autoRotX = Math.sin(t * 0.7) * 0.09;
+    const autoRotY = Math.sin(t * 0.5) * 0.16;
+    const floatY = Math.sin(t * 1.1) * 0.07;
 
     // Drag inertia & momentum decay
     if (!isDragging.current) {
@@ -227,126 +236,289 @@ function YMesh() {
     }
 
     // Scale blending (hover swell + spring rebound)
-    const hoverScale = hovered ? 1.05 : 1.0;
+    const hoverScale = hovered ? 1.04 : 1.0;
     const activeScale = active ? 0.98 : 1.0;
     const currentScale = responsiveScale * hoverScale * activeScale * (1 + scaleImpulse.current);
     groupRef.current.scale.set(currentScale, currentScale, currentScale);
 
-    // Apply rotation: user drag + float + gentle desktop mouse tilt
-    groupRef.current.rotation.x = userRotation.current.x + autoRotX - mouse.y * 0.15;
-    groupRef.current.rotation.y = userRotation.current.y + autoRotY + mouse.x * 0.25;
+    // Apply rotation: user drag + gentle float + desktop mouse tilt
+    groupRef.current.rotation.x = userRotation.current.x + autoRotX - mouse.y * 0.14;
+    groupRef.current.rotation.y = userRotation.current.y + autoRotY + mouse.x * 0.22;
     groupRef.current.position.y = posY + floatY;
   });
 
-  // Material properties per theme preset
-  const matProps = useMemo(() => {
-    switch (yMaterial) {
-      case "glass":
-        return {
+  // ── Multi-Facet Materials Calibrated per Theme ──────────────
+  const { leftMatProps, rightMatProps, stemMatProps, orbMatProps, classicMatProps } = useMemo(() => {
+    // 1. Apple Liquid Glass Theme
+    if (isGlass) {
+      return {
+        leftMatProps: {
+          color: "#FF4A1C",
+          emissive: "#3D0E05",
+          emissiveIntensity: 0.35,
+          roughness: 0.02,
+          metalness: 0.03,
+          transmission: 0.94,
+          thickness: 2.2,
+          ior: 1.52,
+          attenuationColor: "#FFA07A",
+          attenuationDistance: 2.0,
+          clearcoat: 1.0,
+          clearcoatRoughness: 0.02,
+        },
+        rightMatProps: {
           color: "#FFFFFF",
-          emissive: "#1b2848",
+          emissive: "#1B2848",
+          emissiveIntensity: 0.28,
+          roughness: 0.02,
+          metalness: 0.04,
+          transmission: 0.98,
+          thickness: 2.2,
+          ior: 1.54,
+          attenuationColor: "#D2E3FC",
+          attenuationDistance: 2.5,
+          clearcoat: 1.0,
+          clearcoatRoughness: 0.02,
+        },
+        stemMatProps: {
+          color: "#E2E8F0",
+          emissive: "#10182E",
+          emissiveIntensity: 0.22,
+          roughness: 0.03,
+          metalness: 0.03,
+          transmission: 0.96,
+          thickness: 2.4,
+          ior: 1.52,
+          attenuationColor: "#CBD5E1",
+          attenuationDistance: 2.2,
+          clearcoat: 1.0,
+        },
+        orbMatProps: {
+          color: "#FF453A",
+          emissive: "#FF3B30",
+          emissiveIntensity: 1.2,
+          roughness: 0.04,
+          metalness: 0.1,
+          transmission: 0.88,
+          ior: 1.6,
+          clearcoat: 1.0,
+        },
+        classicMatProps: {
+          color: "#FFFFFF",
+          emissive: "#1B2848",
           emissiveIntensity: 0.3,
           roughness: 0.02,
           metalness: 0.04,
           transmission: 0.98,
           thickness: 2.2,
-          ior: 1.52, // Optical crown glass
-          clearcoat: 1.0,
-          clearcoatRoughness: 0.02,
-          attenuationColor: "#d2e3fc",
+          ior: 1.52,
+          attenuationColor: "#D2E3FC",
           attenuationDistance: 2.5,
-          wireframe: false,
-        };
-      case "vermilion":
-        return {
-          color: isDark ? "#E6EBF5" : "#FF4A1C",
-          emissive: isDark ? "#121624" : "#4A0E00",
-          emissiveIntensity: isDark ? 0.15 : 0.35,
-          roughness: isDark ? 0.22 : 0.1,
-          metalness: isDark ? 0.35 : 0.85,
           clearcoat: 1.0,
-          clearcoatRoughness: 0.08,
-          wireframe: false,
-        };
-      case "gold":
-        return {
-          color: "#D4AF37",
-          emissive: "#332402",
-          emissiveIntensity: 0.3,
-          roughness: 0.14,
-          metalness: 0.95,
-          clearcoat: 0.9,
-          clearcoatRoughness: 0.1,
-          wireframe: false,
-        };
-      case "chrome":
-        return {
-          color: "#F2F2F2",
-          emissive: "#111111",
-          emissiveIntensity: 0.1,
-          roughness: 0.03,
-          metalness: 1.0,
-          clearcoat: 1.0,
-          clearcoatRoughness: 0.03,
-          wireframe: false,
-        };
-      case "wireframe":
-        return {
-          color: isDark ? "#E6EBF5" : "#FF4A1C",
-          emissive: isDark ? "#CBD5E1" : "#FF4A1C",
-          emissiveIntensity: 0.8,
-          roughness: 0.1,
-          metalness: 0.5,
-          clearcoat: 0,
-          clearcoatRoughness: 0,
-          wireframe: true,
-        };
-      case "obsidian":
-      default:
-        return {
-          // In dark mode: radiant sculptural satin platinum (luminous, luxurious, harmonizes with white YEAB text)
-          // In light mode: classic obsidian ink sculpture
-          color: isDark ? "#E6EBF5" : "#161514",
-          emissive: isDark ? "#121624" : "#2A1005",
-          emissiveIntensity: isDark ? 0.15 : 0.18,
-          roughness: isDark ? 0.22 : 0.07,
-          metalness: isDark ? 0.35 : 0.92,
-          clearcoat: 1.0,
-          clearcoatRoughness: 0.08,
-          wireframe: false,
-        };
+        },
+      };
     }
-  }, [yMaterial, isDark]);
+
+    // 2. Explicit Material Overrides from Design Studio
+    if (yMaterial === "gold") {
+      const gold = {
+        color: "#D4AF37",
+        emissive: "#332402",
+        emissiveIntensity: 0.3,
+        roughness: 0.14,
+        metalness: 0.95,
+        clearcoat: 0.9,
+        clearcoatRoughness: 0.1,
+      };
+      return {
+        leftMatProps: gold,
+        rightMatProps: { ...gold, color: "#F0DF90" },
+        stemMatProps: gold,
+        orbMatProps: { color: "#FF4A1C", emissive: "#FF3300", emissiveIntensity: 0.8, roughness: 0.1, metalness: 0.3 },
+        classicMatProps: gold,
+      };
+    }
+
+    if (yMaterial === "chrome") {
+      const chrome = {
+        color: "#F2F2F2",
+        emissive: "#111111",
+        emissiveIntensity: 0.1,
+        roughness: 0.03,
+        metalness: 1.0,
+        clearcoat: 1.0,
+        clearcoatRoughness: 0.03,
+      };
+      return {
+        leftMatProps: chrome,
+        rightMatProps: chrome,
+        stemMatProps: chrome,
+        orbMatProps: { color: "#FF4A1C", emissive: "#FF3300", emissiveIntensity: 0.8, roughness: 0.1, metalness: 0.5 },
+        classicMatProps: chrome,
+      };
+    }
+
+    if (yMaterial === "wireframe") {
+      const wire = {
+        color: isDark ? "#E6EBF5" : "#FF4A1C",
+        emissive: isDark ? "#CBD5E1" : "#FF4A1C",
+        emissiveIntensity: 0.8,
+        roughness: 0.1,
+        metalness: 0.5,
+        wireframe: true,
+      };
+      return {
+        leftMatProps: wire,
+        rightMatProps: wire,
+        stemMatProps: wire,
+        orbMatProps: { color: "#FF4A1C", emissive: "#FF3300", emissiveIntensity: 1.0, wireframe: true },
+        classicMatProps: wire,
+      };
+    }
+
+    // 3. Dark Mode: Dual-Tone Brand Architecture (Vermilion Red Left Wing + Radiant Satin Platinum Right Wing + Titanium Stem)
+    if (isDark) {
+      return {
+        leftMatProps: {
+          color: "#FF4A1C", // Signature Vermilion Red
+          emissive: "#380D03",
+          emissiveIntensity: 0.28,
+          roughness: 0.16,
+          metalness: 0.32,
+          clearcoat: 1.0,
+          clearcoatRoughness: 0.06,
+        },
+        rightMatProps: {
+          color: "#F8FAFC", // Radiant platinum silver (mirrors white facet in logo)
+          emissive: "#1E2538",
+          emissiveIntensity: 0.25,
+          roughness: 0.16,
+          metalness: 0.42,
+          clearcoat: 1.0,
+          clearcoatRoughness: 0.06,
+        },
+        stemMatProps: {
+          color: "#94A3B8", // Sleek aerospace titanium pillar
+          emissive: "#0F1420",
+          emissiveIntensity: 0.18,
+          roughness: 0.2,
+          metalness: 0.65,
+          clearcoat: 1.0,
+          clearcoatRoughness: 0.06,
+        },
+        orbMatProps: {
+          color: "#FF4A1C", // Radiant vermilion ruby gem
+          emissive: "#FF4A1C",
+          emissiveIntensity: 0.95,
+          roughness: 0.08,
+          metalness: 0.15,
+          clearcoat: 1.0,
+        },
+        classicMatProps: {
+          color: "#E6EBF5",
+          emissive: "#121624",
+          emissiveIntensity: 0.18,
+          roughness: 0.22,
+          metalness: 0.35,
+          clearcoat: 1.0,
+        },
+      };
+    }
+
+    // 4. Light (Paper) Mode: Authentic Favicon Dual-Tone (Vermilion Red + Gloss Obsidian Noir + Ruby Orb)
+    return {
+      leftMatProps: {
+        color: "#FF4A1C", // Signature Vermilion Red lacquer
+        emissive: "#4A1005",
+        emissiveIntensity: 0.3,
+        roughness: 0.14,
+        metalness: 0.25,
+        clearcoat: 1.0,
+        clearcoatRoughness: 0.05,
+      },
+      rightMatProps: {
+        color: "#181922", // Deep sculptural Obsidian Noir (high-contrast designer facet)
+        emissive: "#0A0B10",
+        emissiveIntensity: 0.15,
+        roughness: 0.12,
+        metalness: 0.85,
+        clearcoat: 1.0,
+        clearcoatRoughness: 0.05,
+      },
+      stemMatProps: {
+        color: "#FF4A1C", // Vermilion red architectural column
+        emissive: "#3A0E04",
+        emissiveIntensity: 0.25,
+        roughness: 0.16,
+        metalness: 0.32,
+        clearcoat: 1.0,
+        clearcoatRoughness: 0.06,
+      },
+      orbMatProps: {
+        color: "#FF4A1C", // Glowing vermilion accent bead
+        emissive: "#FF3300",
+        emissiveIntensity: 0.85,
+        roughness: 0.05,
+        metalness: 0.2,
+        clearcoat: 1.0,
+      },
+      classicMatProps: {
+        color: "#161514",
+        emissive: "#2A1005",
+        emissiveIntensity: 0.18,
+        roughness: 0.07,
+        metalness: 0.92,
+        clearcoat: 1.0,
+      },
+    };
+  }, [yMaterial, isDark, isGlass]);
+
+  const pointerHandlers = {
+    onPointerDown: handlePointerDown,
+    onPointerOver: (e: any) => {
+      e.stopPropagation();
+      setHovered(true);
+      if (!isDragging.current) document.body.style.cursor = "grab";
+    },
+    onPointerOut: (e: any) => {
+      e.stopPropagation();
+      setHovered(false);
+      if (!isDragging.current) document.body.style.cursor = "default";
+    },
+  };
 
   return (
     <group ref={groupRef} scale={responsiveScale} position={[0, posY, 0]}>
-      <mesh
-        ref={meshRef}
-        geometry={geometry}
-        castShadow
-        receiveShadow
-        onPointerDown={handlePointerDown}
-        onPointerOver={(e) => {
-          e.stopPropagation();
-          setHovered(true);
-          if (!isDragging.current) {
-            document.body.style.cursor = "grab";
-          }
-        }}
-        onPointerOut={(e) => {
-          e.stopPropagation();
-          setHovered(false);
-          if (!isDragging.current) {
-            document.body.style.cursor = "default";
-          }
-        }}
-      >
-        <meshPhysicalMaterial
-          {...matProps}
-          reflectivity={1.0}
-          ior={matProps.ior ?? 1.65}
-        />
-      </mesh>
+      {yShapeType === "classic" ? (
+        // Fallback classic single block Y
+        <mesh geometry={classicGeo} castShadow receiveShadow {...pointerHandlers}>
+          <meshPhysicalMaterial {...classicMatProps} reflectivity={1.0} />
+        </mesh>
+      ) : (
+        // Bespoke 3D Brand Favicon Monogram Kinetic Assembly
+        <group {...pointerHandlers}>
+          {/* Left Wing Ribbon (Vermilion Red geometric facet) */}
+          <mesh geometry={leftWingGeo} castShadow receiveShadow>
+            <meshPhysicalMaterial {...leftMatProps} reflectivity={1.0} />
+          </mesh>
+
+          {/* Right Wing Ribbon (Crisp Obsidian / Platinum facet) */}
+          <mesh geometry={rightWingGeo} castShadow receiveShadow>
+            <meshPhysicalMaterial {...rightMatProps} reflectivity={1.0} />
+          </mesh>
+
+          {/* Central Stem Column (Architectural slotted pillar with interlocking saddle) */}
+          <mesh geometry={stemGeo} castShadow receiveShadow>
+            <meshPhysicalMaterial {...stemMatProps} reflectivity={1.0} />
+          </mesh>
+
+          {/* Signature Brand Accent Orb (Vermilion ruby sphere at apex) */}
+          <mesh position={[1.125, 1.125, 0.06]} castShadow>
+            <sphereGeometry args={[0.13, 32, 32]} />
+            <meshPhysicalMaterial {...orbMatProps} reflectivity={1.0} />
+          </mesh>
+        </group>
+      )}
     </group>
   );
 }
@@ -378,30 +550,39 @@ export default function ThreeY({ style }: { style?: React.CSSProperties }) {
         camera={{ position: [0, 0, 5.8], fov: 44 }}
       >
         {/* Studio Lighting calibrated for light, dark, and Apple Liquid Glass */}
-        <ambientLight intensity={isGlass ? 1.8 : isDark ? 2.4 : 1.4} />
+        <ambientLight intensity={isGlass ? 2.0 : isDark ? 2.2 : 2.0} />
+        {/* Right Key Light */}
         <directionalLight
-          position={[5, 8, 6]}
-          intensity={isGlass ? 4.5 : 3.4}
+          position={[5, 7, 6]}
+          intensity={isGlass ? 4.5 : isDark ? 3.6 : 3.8}
           color="#FFFFFF"
         />
+        {/* Left Key Light (illuminates the Left Wing and hollow window!) */}
         <directionalLight
-          position={[-6, -4, 4]}
-          intensity={isGlass ? 3.0 : isDark ? 2.4 : 2.8}
-          color={isGlass ? "#38BDF8" : isDark ? "#CBD5E1" : "#FF4A1C"}
+          position={[-5, 7, 6]}
+          intensity={isGlass ? 3.4 : isDark ? 3.2 : 3.6}
+          color={isDark ? "#FFFFFF" : "#FFF7ED"}
         />
+        {/* Front Specular Glint */}
         <directionalLight
-          position={[-5, 6, -3]}
+          position={[0, 4, 5]}
           intensity={2.0}
-          color={isGlass ? "#FFFFFF" : isDark ? "#E2E8F0" : "#E8F0FE"}
+          color="#FFFFFF"
+        />
+        {/* Rim Light */}
+        <directionalLight
+          position={[-4, -5, 3]}
+          intensity={1.8}
+          color={isGlass ? "#38BDF8" : isDark ? "#CBD5E1" : "#FF5A2C"}
         />
         <pointLight
           position={[0, -4, 3]}
-          intensity={isDark ? 1.6 : 2.2}
-          color={isGlass ? "#38BDF8" : isDark ? "#94A3B8" : "#FF7A3D"}
+          intensity={isDark ? 1.6 : 2.0}
+          color={isGlass ? "#38BDF8" : isDark ? "#94A3B8" : "#FF6A28"}
         />
         <pointLight
           position={[0, 2, 4]}
-          intensity={isGlass ? 2.8 : isDark ? 2.4 : 1.8}
+          intensity={isGlass ? 2.8 : isDark ? 2.2 : 1.8}
           color="#FFFFFF"
         />
 
@@ -412,3 +593,5 @@ export default function ThreeY({ style }: { style?: React.CSSProperties }) {
     </div>
   );
 }
+
+
