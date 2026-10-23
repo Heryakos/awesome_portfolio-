@@ -1739,6 +1739,58 @@ export default function CmsEditor() {
                   marginBottom: 8,
                 }}
               >
+                3D Kinetic &apos;Y&apos; Geometry Model
+              </span>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6, marginBottom: 14 }}>
+                {[
+                  { id: "brand", label: "Brand Favicon Monogram", icon: "✨" },
+                  { id: "classic", label: "Classic Block Y", icon: "📐" },
+                ].map((shape) => {
+                  const currentShape = cms.overrides.effects?.yShape || "brand";
+                  const isSel = currentShape === shape.id;
+                  return (
+                    <button
+                      key={shape.id}
+                      onClick={() => {
+                        cms.setEffect("yShape", shape.id as any);
+                        cms.showToast(`3D 'Y' model set to ${shape.label}`);
+                      }}
+                      style={{
+                        padding: "8px 10px",
+                        background: isSel ? "rgba(255, 74, 28, 0.15)" : "rgba(255, 255, 255, 0.03)",
+                        border: isSel ? "1px solid #FF4A1C" : "1px solid rgba(255, 255, 255, 0.08)",
+                        borderRadius: 8,
+                        color: isSel ? "#FF4A1C" : "#ddd",
+                        fontSize: "0.65rem",
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 6,
+                        fontWeight: isSel ? 700 : 500,
+                      }}
+                    >
+                      <span>{shape.icon}</span>
+                      <span>{shape.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div style={{ height: 1, background: "rgba(255,255,255,0.06)", marginBottom: 12 }} />
+
+            <div>
+              <span
+                style={{
+                  fontSize: "0.64rem",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.08em",
+                  color: "#888",
+                  fontWeight: 700,
+                  display: "block",
+                  marginBottom: 8,
+                }}
+              >
                 3D Kinetic &apos;Y&apos; Finish
               </span>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>

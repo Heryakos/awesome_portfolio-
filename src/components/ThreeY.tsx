@@ -6,8 +6,76 @@ import * as THREE from "three";
 import { useMousePosition } from "@/hooks/useMousePosition";
 import { useCms } from "./CmsContext";
 
-// ── Custom Y shape built from ExtrudeGeometry ────────────────
-function createYShape(): THREE.Shape {
+// ── Bespoke Brand Favicon 3D Y Geometry ──────────────────────
+// Faithfully reproduces the architectural monogram with hollow negative-space windows
+function createBrandFaviconYShape(): THREE.Shape {
+  const shape = new THREE.Shape();
+
+  // Outer boundary (Counter-Clockwise)
+  // Base of stem
+  shape.moveTo(-0.28, -1.35);
+  shape.lineTo(0.28, -1.35);
+  
+  // Right side of stem
+  shape.lineTo(0.28, -0.05);
+  
+  // Right arm outer chevron diagonal
+  shape.lineTo(0.72, 0.48);
+  shape.lineTo(1.18, 1.35);
+  
+  // Right arm top flat edge
+  shape.lineTo(0.68, 1.35);
+  
+  // Right arm inner slope towards center crotch
+  shape.lineTo(0.25, 0.52);
+  shape.lineTo(0.0, 0.16);
+  
+  // Left arm inner slope towards center crotch
+  shape.lineTo(-0.25, 0.52);
+  shape.lineTo(-0.68, 1.35);
+  
+  // Left arm top flat edge
+  shape.lineTo(-1.18, 1.35);
+  
+  // Left arm outer chevron diagonal
+  shape.lineTo(-0.72, 0.48);
+  
+  // Left side of stem
+  shape.lineTo(-0.28, -0.05);
+  shape.closePath();
+
+  // Hole 1: Left arm angular negative-space window (Clockwise)
+  const leftHole = new THREE.Path();
+  leftHole.moveTo(-0.92, 1.15);
+  leftHole.lineTo(-0.72, 1.15);
+  leftHole.lineTo(-0.48, 0.72);
+  leftHole.lineTo(-0.65, 0.52);
+  leftHole.closePath();
+  shape.holes.push(leftHole);
+
+  // Hole 2: Right arm angular negative-space window (Clockwise)
+  const rightHole = new THREE.Path();
+  rightHole.moveTo(0.72, 1.15);
+  rightHole.lineTo(0.92, 1.15);
+  rightHole.lineTo(0.65, 0.52);
+  rightHole.lineTo(0.48, 0.72);
+  rightHole.closePath();
+  shape.holes.push(rightHole);
+
+  // Hole 3: Stem vertical architectural slot (Clockwise)
+  const stemHole = new THREE.Path();
+  stemHole.moveTo(-0.09, -1.15);
+  stemHole.lineTo(-0.09, -0.15);
+  stemHole.lineTo(0.09, -0.15);
+  stemHole.lineTo(0.09, -1.15);
+  stemHole.closePath();
+  shape.holes.push(stemHole);
+
+  return shape;
+}
+
+// ── Classic block Y shape (fallback if user wants classic) ────
+function createClassicYShape(): THREE.Shape {
   const shape = new THREE.Shape();
   const t = 0.22; // stem half-width
 
@@ -59,7 +127,8 @@ function YMesh() {
   const posY = isMobile ? -0.15 : 0;
 
   const geometry = useMemo(() => {
-    const shape = createYShape();
+    const yShapeType = effects?.yShape || "brand";
+    const shape = yShapeType === "classic" ? createClassicYShape() : createBrandFaviconYShape();
     const extrudeSettings: THREE.ExtrudeGeometryOptions = {
       depth: 0.38,
       bevelEnabled: true,
@@ -72,7 +141,7 @@ function YMesh() {
     const geo = new THREE.ExtrudeGeometry(shape, extrudeSettings);
     geo.center();
     return geo;
-  }, []);
+  }, [effects?.yShape]);
 
   // Global window listeners for drag-to-rotate so dragging stays smooth anywhere on screen
   useEffect(() => {
@@ -139,7 +208,7 @@ function YMesh() {
 
     // Organic continuous floating oscillation
     const autoRotX = Math.sin(t * 0.7) * 0.12;
-    const autoRotY = Math.cos(t * 0.5) * 0.18;
+    const autoRotY = Math.sin(t * 0.5) * 0.22;
     const floatY = Math.sin(t * 1.1) * 0.08;
 
     // Drag inertia & momentum decay
@@ -149,10 +218,11 @@ function YMesh() {
       rotVelocity.current.x *= Math.pow(0.92, dt * 60);
       rotVelocity.current.y *= Math.pow(0.92, dt * 60);
 
-      // When idle for over 2 seconds, gently resume ambient rotation
+      // When idle for over 1.5 seconds, gently ease user rotation back towards front face
       const idleTime = (performance.now() - lastInteractTime.current) / 1000;
-      if (idleTime > 2.0) {
-        userRotation.current.y += dt * 0.2 * speedMult;
+      if (idleTime > 1.5) {
+        userRotation.current.x *= Math.pow(0.96, dt * 60);
+        userRotation.current.y *= Math.pow(0.96, dt * 60);
       }
     }
 

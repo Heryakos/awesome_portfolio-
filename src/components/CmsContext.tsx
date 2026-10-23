@@ -36,6 +36,7 @@ export interface CertItem {
 
 export interface EffectsState {
   yMaterial?: "obsidian" | "vermilion" | "gold" | "chrome" | "wireframe" | "glass";
+  yShape?: "brand" | "classic";
   ySpeed?: number;
   showHearts?: boolean;
 }
@@ -119,6 +120,7 @@ const emptyOverrides: CmsOverrides = {
   customReviews: [],
   effects: {
     yMaterial: "obsidian",
+    yShape: "brand",
     ySpeed: 1.0,
     showHearts: false,
   },
