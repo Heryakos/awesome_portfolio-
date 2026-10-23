@@ -106,9 +106,6 @@ function YeabFaviconMark({ theme }: { theme: "light" | "dark" | "glass" }) {
           {/* Bevel lighting */}
           <path d="M 32 32 L 36 32 L 36 48 L 32 48 Z" fill="rgba(0,0,0,0.22)" />
           <path d="M 28 32 L 32 32 L 32 48 L 28 48 Z" fill="rgba(255,255,255,0.25)" />
-
-          {/* Signature vermilion accent dot */}
-          <circle cx="47" cy="18" r="2.8" fill={vermilionColor} />
         </g>
       </svg>
     </span>

@@ -248,7 +248,7 @@ function YMesh() {
   });
 
   // ── Multi-Facet Materials Calibrated per Theme ──────────────
-  const { leftMatProps, rightMatProps, stemMatProps, orbMatProps, classicMatProps } = useMemo(() => {
+  const { leftMatProps, rightMatProps, stemMatProps, classicMatProps } = useMemo(() => {
     // 1. Apple Liquid Glass Theme
     if (isGlass) {
       return {
@@ -293,16 +293,6 @@ function YMesh() {
           attenuationDistance: 2.2,
           clearcoat: 1.0,
         },
-        orbMatProps: {
-          color: "#FF453A",
-          emissive: "#FF3B30",
-          emissiveIntensity: 1.2,
-          roughness: 0.04,
-          metalness: 0.1,
-          transmission: 0.88,
-          ior: 1.6,
-          clearcoat: 1.0,
-        },
         classicMatProps: {
           color: "#FFFFFF",
           emissive: "#1B2848",
@@ -334,7 +324,6 @@ function YMesh() {
         leftMatProps: gold,
         rightMatProps: { ...gold, color: "#F0DF90" },
         stemMatProps: gold,
-        orbMatProps: { color: "#FF4A1C", emissive: "#FF3300", emissiveIntensity: 0.8, roughness: 0.1, metalness: 0.3 },
         classicMatProps: gold,
       };
     }
@@ -353,7 +342,6 @@ function YMesh() {
         leftMatProps: chrome,
         rightMatProps: chrome,
         stemMatProps: chrome,
-        orbMatProps: { color: "#FF4A1C", emissive: "#FF3300", emissiveIntensity: 0.8, roughness: 0.1, metalness: 0.5 },
         classicMatProps: chrome,
       };
     }
@@ -371,7 +359,6 @@ function YMesh() {
         leftMatProps: wire,
         rightMatProps: wire,
         stemMatProps: wire,
-        orbMatProps: { color: "#FF4A1C", emissive: "#FF3300", emissiveIntensity: 1.0, wireframe: true },
         classicMatProps: wire,
       };
     }
@@ -398,21 +385,13 @@ function YMesh() {
           clearcoatRoughness: 0.06,
         },
         stemMatProps: {
-          color: "#94A3B8", // Sleek aerospace titanium pillar
+          color: "#CBD5E1", // Sleek aerospace titanium pillar
           emissive: "#0F1420",
           emissiveIntensity: 0.18,
           roughness: 0.2,
           metalness: 0.65,
           clearcoat: 1.0,
           clearcoatRoughness: 0.06,
-        },
-        orbMatProps: {
-          color: "#FF4A1C", // Radiant vermilion ruby gem
-          emissive: "#FF4A1C",
-          emissiveIntensity: 0.95,
-          roughness: 0.08,
-          metalness: 0.15,
-          clearcoat: 1.0,
         },
         classicMatProps: {
           color: "#E6EBF5",
@@ -425,42 +404,35 @@ function YMesh() {
       };
     }
 
-    // 4. Light (Paper) Mode: Authentic Favicon Dual-Tone (Vermilion Red + Gloss Obsidian Noir + Ruby Orb)
+    // 4. Light (Paper) Mode: Authentic Favicon Dual-Tone (Vermilion Red + Architectural Ivory White Porcelain)
+    // Mirrors the exact favicon color architecture on the warm paper background
     return {
       leftMatProps: {
         color: "#FF4A1C", // Signature Vermilion Red lacquer
         emissive: "#4A1005",
-        emissiveIntensity: 0.3,
+        emissiveIntensity: 0.28,
         roughness: 0.14,
         metalness: 0.25,
         clearcoat: 1.0,
         clearcoatRoughness: 0.05,
       },
       rightMatProps: {
-        color: "#181922", // Deep sculptural Obsidian Noir (high-contrast designer facet)
-        emissive: "#0A0B10",
-        emissiveIntensity: 0.15,
+        color: "#FAF8F5", // Radiant Architectural Ivory White
+        emissive: "#1C1B18",
+        emissiveIntensity: 0.14,
         roughness: 0.12,
-        metalness: 0.85,
+        metalness: 0.3,
         clearcoat: 1.0,
         clearcoatRoughness: 0.05,
       },
       stemMatProps: {
-        color: "#FF4A1C", // Vermilion red architectural column
-        emissive: "#3A0E04",
-        emissiveIntensity: 0.25,
+        color: "#EDE8DE", // Architectural Satin Ivory Titanium column
+        emissive: "#161512",
+        emissiveIntensity: 0.12,
         roughness: 0.16,
-        metalness: 0.32,
+        metalness: 0.35,
         clearcoat: 1.0,
         clearcoatRoughness: 0.06,
-      },
-      orbMatProps: {
-        color: "#FF4A1C", // Glowing vermilion accent bead
-        emissive: "#FF3300",
-        emissiveIntensity: 0.85,
-        roughness: 0.05,
-        metalness: 0.2,
-        clearcoat: 1.0,
       },
       classicMatProps: {
         color: "#161514",
@@ -495,14 +467,14 @@ function YMesh() {
           <meshPhysicalMaterial {...classicMatProps} reflectivity={1.0} />
         </mesh>
       ) : (
-        // Bespoke 3D Brand Favicon Monogram Kinetic Assembly
+        // Bespoke 3D Brand Favicon Monogram Kinetic Assembly (Clean architectural facets, NO ball)
         <group {...pointerHandlers}>
           {/* Left Wing Ribbon (Vermilion Red geometric facet) */}
           <mesh geometry={leftWingGeo} castShadow receiveShadow>
             <meshPhysicalMaterial {...leftMatProps} reflectivity={1.0} />
           </mesh>
 
-          {/* Right Wing Ribbon (Crisp Obsidian / Platinum facet) */}
+          {/* Right Wing Ribbon (Crisp Ivory / Platinum facet) */}
           <mesh geometry={rightWingGeo} castShadow receiveShadow>
             <meshPhysicalMaterial {...rightMatProps} reflectivity={1.0} />
           </mesh>
@@ -510,12 +482,6 @@ function YMesh() {
           {/* Central Stem Column (Architectural slotted pillar with interlocking saddle) */}
           <mesh geometry={stemGeo} castShadow receiveShadow>
             <meshPhysicalMaterial {...stemMatProps} reflectivity={1.0} />
-          </mesh>
-
-          {/* Signature Brand Accent Orb (Vermilion ruby sphere at apex) */}
-          <mesh position={[1.125, 1.125, 0.06]} castShadow>
-            <sphereGeometry args={[0.13, 32, 32]} />
-            <meshPhysicalMaterial {...orbMatProps} reflectivity={1.0} />
           </mesh>
         </group>
       )}
@@ -549,36 +515,37 @@ export default function ThreeY({ style }: { style?: React.CSSProperties }) {
         }}
         camera={{ position: [0, 0, 5.8], fov: 44 }}
       >
-        {/* Studio Lighting calibrated for light, dark, and Apple Liquid Glass */}
+        {/* Studio Lighting calibrated for 360° rotation across light, dark, and Apple Liquid Glass */}
         <ambientLight intensity={isGlass ? 2.0 : isDark ? 2.2 : 2.0} />
-        {/* Right Key Light */}
+        {/* Front-Right Key Light */}
         <directionalLight
           position={[5, 7, 6]}
           intensity={isGlass ? 4.5 : isDark ? 3.6 : 3.8}
           color="#FFFFFF"
         />
-        {/* Left Key Light (illuminates the Left Wing and hollow window!) */}
+        {/* Front-Left Key Light (illuminates the Left Wing and hollow window!) */}
         <directionalLight
           position={[-5, 7, 6]}
           intensity={isGlass ? 3.4 : isDark ? 3.2 : 3.6}
           color={isDark ? "#FFFFFF" : "#FFF7ED"}
         />
+        {/* Back Rim / Kicker Light (ensures rotated backside has brilliant edge speculars) */}
+        <directionalLight
+          position={[0, 5, -6]}
+          intensity={2.2}
+          color="#FFFFFF"
+        />
         {/* Front Specular Glint */}
         <directionalLight
-          position={[0, 4, 5]}
+          position={[0, 3, 5]}
           intensity={2.0}
           color="#FFFFFF"
         />
-        {/* Rim Light */}
-        <directionalLight
-          position={[-4, -5, 3]}
-          intensity={1.8}
-          color={isGlass ? "#38BDF8" : isDark ? "#CBD5E1" : "#FF5A2C"}
-        />
+        {/* Bottom Rim Light */}
         <pointLight
           position={[0, -4, 3]}
           intensity={isDark ? 1.6 : 2.0}
-          color={isGlass ? "#38BDF8" : isDark ? "#94A3B8" : "#FF6A28"}
+          color={isGlass ? "#38BDF8" : isDark ? "#CBD5E1" : "#FF6A28"}
         />
         <pointLight
           position={[0, 2, 4]}
