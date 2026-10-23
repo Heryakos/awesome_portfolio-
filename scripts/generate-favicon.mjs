@@ -118,13 +118,19 @@ async function run() {
   <!-- Squircle Base -->
   <rect x="180" y="180" width="664" height="664" rx="168" ry="168" fill="url(#bgGrad)" stroke="rgba(255,255,255,0.12)" stroke-width="8"/>
 
-  <!-- Exact 1:1 Brand Favicon Monogram -->
+  <!-- Exact 1:1 Brand Favicon Monogram with Break Line and Bottom Base Bar -->
   <g filter="url(#subtleGlow)">
-    <!-- Part 1: Red Left Wing & Left Stem -->
+    <!-- Part 1A: Upper Red Left Wing (terminates at diagonal break line) -->
     <path
-      d="M 302 312 L 430 312 L 486 535 L 486 680 L 453 715 L 453 535 Z M 364 342 L 424 342 L 456 452 L 396 452 Z"
+      d="M 302 312 L 430 312 L 472 410 L 426 518 L 384 518 L 302 312 Z M 364 342 L 424 342 L 456 420 L 396 452 Z"
       fill="url(#vermilionGrad)"
       fill-rule="evenodd"
+    />
+
+    <!-- Part 1B: Lower Red Left Stem Pillar (starts below break line, chamfered at bottom bar) -->
+    <path
+      d="M 453 542 L 486 525 L 486 680 L 453 715 Z"
+      fill="url(#vermilionGrad)"
     />
 
     <!-- Part 2: Red Right Wing Loop -->
@@ -140,10 +146,12 @@ async function run() {
       fill="url(#ivoryGrad)"
     />
 
-    <!-- Bottom Base 3D Chamfer -->
+    <!-- Part 4: Bottom Connecting Base Bar under Stem with 45° Chamfer Line -->
     <path
       d="M 453 715 L 570 715 L 537 680 L 486 680 Z"
       fill="url(#ivoryShadow)"
+      stroke="#181922"
+      stroke-width="2"
     />
   </g>
 </svg>`;

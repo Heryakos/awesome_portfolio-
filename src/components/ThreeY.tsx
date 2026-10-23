@@ -13,25 +13,36 @@ import { useCms } from "./CmsContext";
 // 3. Ivory Architectural Interlocking Diagonal Ribbon, Right Stem & Base
 // Zero balls or spheres.
 
-function createRedLeftShape(): THREE.Shape {
+function createRedLeftWingShape(): THREE.Shape {
   const shape = new THREE.Shape();
-  // Outer boundary (Counter-Clockwise)
-  shape.moveTo(-0.328, -0.122);
-  shape.lineTo(-0.328, -1.122);
-  shape.lineTo(-0.144, -0.928);
-  shape.lineTo(-0.144, -0.122);
+  // Outer boundary (Counter-Clockwise) - terminates at diagonal break line
+  shape.moveTo(-0.711, -0.028);
+  shape.lineTo(-0.478, -0.028);
+  shape.lineTo(-0.222, 0.572);
   shape.lineTo(-0.456, 1.117);
   shape.lineTo(-1.167, 1.117);
   shape.closePath();
 
   // Negative-space window hole (Clockwise)
   const hole = new THREE.Path();
-  hole.moveTo(-0.822, 0.95);
-  hole.lineTo(-0.489, 0.95);
-  hole.lineTo(-0.311, 0.339);
+  hole.moveTo(-0.822, 0.950);
+  hole.lineTo(-0.489, 0.950);
+  hole.lineTo(-0.311, 0.517);
   hole.lineTo(-0.644, 0.339);
   hole.closePath();
   shape.holes.push(hole);
+
+  return shape;
+}
+
+function createRedStemShape(): THREE.Shape {
+  const shape = new THREE.Shape();
+  // Outer boundary (Counter-Clockwise) - starts below break line, ends with 45° base chamfer
+  shape.moveTo(-0.328, -1.122);
+  shape.lineTo(-0.144, -0.928);
+  shape.lineTo(-0.144, -0.067);
+  shape.lineTo(-0.328, -0.161);
+  shape.closePath();
 
   return shape;
 }
@@ -59,7 +70,7 @@ function createRedRightShape(): THREE.Shape {
 
 function createIvoryRibbonShape(): THREE.Shape {
   const shape = new THREE.Shape();
-  // Outer boundary (Counter-Clockwise)
+  // Outer boundary (Counter-Clockwise) - Ribbon + Right Stem + Bottom Connecting Base Bar
   shape.moveTo(-0.144, 0.517);
   shape.lineTo(0.139, 0.017);
   shape.lineTo(0.139, -0.928);
@@ -138,8 +149,9 @@ function YMesh() {
     []
   );
 
-  // Geometries for Brand Favicon parts (1:1 with favicon.ico)
-  const redLeftGeo = useMemo(() => new THREE.ExtrudeGeometry(createRedLeftShape(), extrudeSettings), [extrudeSettings]);
+  // Geometries for Brand Favicon parts with Break Line and Base Bar (1:1 with favicon.ico)
+  const redLeftWingGeo = useMemo(() => new THREE.ExtrudeGeometry(createRedLeftWingShape(), extrudeSettings), [extrudeSettings]);
+  const redStemGeo = useMemo(() => new THREE.ExtrudeGeometry(createRedStemShape(), extrudeSettings), [extrudeSettings]);
   const redRightGeo = useMemo(() => new THREE.ExtrudeGeometry(createRedRightShape(), extrudeSettings), [extrudeSettings]);
   const ivoryRibbonGeo = useMemo(() => {
     const ivorySettings = { ...extrudeSettings, depth: 0.36 };
@@ -434,10 +446,15 @@ function YMesh() {
           <meshPhysicalMaterial {...classicMatProps} reflectivity={1.0} />
         </mesh>
       ) : (
-        // 1:1 Favicon Brand Monogram (Red Left Arm & Stem + Red Right Loop + Interlocking Ivory Ribbon, NO ball)
+        // 1:1 Favicon Brand Monogram with Break Line and Bottom Connecting Base Bar
         <group {...pointerHandlers}>
-          {/* Part 1: Red Left Ribbon & Left Stem Pillar */}
-          <mesh geometry={redLeftGeo} castShadow receiveShadow>
+          {/* Part 1A: Red Left Wing (terminates at diagonal break line) */}
+          <mesh geometry={redLeftWingGeo} castShadow receiveShadow>
+            <meshPhysicalMaterial {...redMatProps} reflectivity={1.0} />
+          </mesh>
+
+          {/* Part 1B: Red Left Stem Pillar (starts below break line, chamfered at bottom bar) */}
+          <mesh geometry={redStemGeo} castShadow receiveShadow>
             <meshPhysicalMaterial {...redMatProps} reflectivity={1.0} />
           </mesh>
 
@@ -446,7 +463,7 @@ function YMesh() {
             <meshPhysicalMaterial {...redMatProps} reflectivity={1.0} />
           </mesh>
 
-          {/* Part 3: Ivory Interlocking Diagonal Ribbon & Right Stem Pillar */}
+          {/* Part 3: Ivory Interlocking Diagonal Ribbon, Right Stem & Bottom Connecting Base Bar */}
           <mesh geometry={ivoryRibbonGeo} position={[0, 0, 0.01]} castShadow receiveShadow>
             <meshPhysicalMaterial {...ivoryMatProps} reflectivity={1.0} />
           </mesh>

@@ -106,13 +106,19 @@ function YeabFaviconMark({ theme }: { theme: "light" | "dark" | "glass" }) {
           strokeWidth="10"
         />
 
-        {/* Exact 1:1 Brand Favicon Monogram */}
+        {/* Exact 1:1 Brand Favicon Monogram with Break Line and Bottom Base Bar */}
         <g filter={`url(#yGlow-${theme})`}>
-          {/* Part 1: Red Left Wing & Left Stem */}
+          {/* Part 1A: Upper Red Left Wing (terminates at diagonal break line) */}
           <path
-            d="M 302 312 L 430 312 L 486 535 L 486 680 L 453 715 L 453 535 Z M 364 342 L 424 342 L 456 452 L 396 452 Z"
+            d="M 302 312 L 430 312 L 472 410 L 426 518 L 384 518 L 302 312 Z M 364 342 L 424 342 L 456 420 L 396 452 Z"
             fill={`url(#yStemGrad-${theme})`}
             fillRule="evenodd"
+          />
+
+          {/* Part 1B: Lower Red Left Stem Pillar (starts below break line, chamfered at bottom bar) */}
+          <path
+            d="M 453 542 L 486 525 L 486 680 L 453 715 Z"
+            fill={`url(#yStemGrad-${theme})`}
           />
 
           {/* Part 2: Red Right Wing Loop */}
@@ -128,10 +134,12 @@ function YeabFaviconMark({ theme }: { theme: "light" | "dark" | "glass" }) {
             fill={`url(#yIvoryGrad-${theme})`}
           />
 
-          {/* Bottom Base 3D Chamfer */}
+          {/* Part 4: Bottom Connecting Base Bar under Stem with 45° Chamfer Line */}
           <path
             d="M 453 715 L 570 715 L 537 680 L 486 680 Z"
             fill={ivoryShadow}
+            stroke={bgFill}
+            strokeWidth="2"
           />
         </g>
       </svg>
