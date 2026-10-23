@@ -6,73 +6,70 @@ import * as THREE from "three";
 import { useMousePosition } from "@/hooks/useMousePosition";
 import { useCms } from "./CmsContext";
 
-// ── Unified Brand Favicon 3D Monogram Geometry ──────────────
-// Mathematically mapped from public/icon.svg (64x64 viewBox):
-// All parts share the exact same origin coordinate space so they interlock
-// with zero seams, zero gaps, and verified clockwise hole windings.
+// ── 1:1 Favicon Brand Monogram Architectural Geometry ────────
+// Faithfully matches public/favicon.ico:
+// 1. Red Left Ribbon & Left Stem Pillar with hollow cut-out window
+// 2. Red Right Ribbon Loop with hollow cut-out window
+// 3. Ivory Architectural Interlocking Diagonal Ribbon, Right Stem & Base
+// Zero balls or spheres.
 
-function createLeftWingShape(): THREE.Shape {
+function createRedLeftShape(): THREE.Shape {
   const shape = new THREE.Shape();
   // Outer boundary (Counter-Clockwise)
-  shape.moveTo(-1.125, 0.6);
-  shape.lineTo(-0.45, -0.225);
-  shape.lineTo(0.0, 0.225);
-  shape.lineTo(-0.45, 1.125);
-  shape.lineTo(-1.125, 1.125);
+  shape.moveTo(-0.328, -0.122);
+  shape.lineTo(-0.328, -1.122);
+  shape.lineTo(-0.144, -0.928);
+  shape.lineTo(-0.144, -0.122);
+  shape.lineTo(-0.456, 1.117);
+  shape.lineTo(-1.167, 1.117);
   shape.closePath();
 
   // Negative-space window hole (Clockwise)
   const hole = new THREE.Path();
-  hole.moveTo(-0.75, 0.9);
-  hole.lineTo(-0.5625, 0.9);
-  hole.lineTo(-0.2625, 0.3);
-  hole.lineTo(-0.45, 0.15);
+  hole.moveTo(-0.822, 0.95);
+  hole.lineTo(-0.489, 0.95);
+  hole.lineTo(-0.311, 0.339);
+  hole.lineTo(-0.644, 0.339);
   hole.closePath();
   shape.holes.push(hole);
 
   return shape;
 }
 
-function createRightWingShape(): THREE.Shape {
+function createRedRightShape(): THREE.Shape {
   const shape = new THREE.Shape();
   // Outer boundary (Counter-Clockwise)
-  shape.moveTo(0.3, -0.225);
-  shape.lineTo(1.125, 0.9);
-  shape.lineTo(1.125, 1.125);
-  shape.lineTo(0.45, 1.125);
-  shape.lineTo(0.0, 0.225);
+  shape.moveTo(0.078, 0.617);
+  shape.lineTo(0.45, 0.061);
+  shape.lineTo(1.161, 1.117);
+  shape.lineTo(0.372, 1.117);
   shape.closePath();
 
-  // Negative-space window hole (Clockwise: verified reversed winding)
+  // Negative-space window hole (Clockwise)
   const hole = new THREE.Path();
-  hole.moveTo(0.375, 0.075);
-  hole.lineTo(0.225, 0.225);
-  hole.lineTo(0.5625, 0.825);
-  hole.lineTo(0.75, 0.825);
+  hole.moveTo(0.483, 0.95);
+  hole.lineTo(0.817, 0.95);
+  hole.lineTo(0.489, 0.45);
+  hole.lineTo(0.306, 0.617);
   hole.closePath();
   shape.holes.push(hole);
 
   return shape;
 }
 
-function createStemShape(): THREE.Shape {
+function createIvoryRibbonShape(): THREE.Shape {
   const shape = new THREE.Shape();
-  // Outer boundary (Counter-Clockwise, chevron saddle interlocking flush with arms)
-  shape.moveTo(-0.3375, -1.125);
-  shape.lineTo(0.3375, -1.125);
-  shape.lineTo(0.3375, -0.281);
-  shape.lineTo(0.0, 0.225);
-  shape.lineTo(-0.3375, -0.1125);
+  // Outer boundary (Counter-Clockwise)
+  shape.moveTo(-0.144, 0.517);
+  shape.lineTo(0.139, 0.017);
+  shape.lineTo(0.139, -0.928);
+  shape.lineTo(-0.144, -0.928);
+  shape.lineTo(-0.328, -1.122);
+  shape.lineTo(0.322, -1.122);
+  shape.lineTo(0.322, 0.061);
+  shape.lineTo(-0.356, 1.117);
+  shape.lineTo(-0.456, 1.117);
   shape.closePath();
-
-  // Negative-space vertical slot hole (Clockwise)
-  const hole = new THREE.Path();
-  hole.moveTo(-0.075, -0.15);
-  hole.lineTo(0.075, -0.15);
-  hole.lineTo(0.075, -0.9);
-  hole.lineTo(-0.075, -0.9);
-  hole.closePath();
-  shape.holes.push(hole);
 
   return shape;
 }
@@ -141,10 +138,13 @@ function YMesh() {
     []
   );
 
-  // Geometries for Brand Favicon parts (share identical origin for perfect fit)
-  const leftWingGeo = useMemo(() => new THREE.ExtrudeGeometry(createLeftWingShape(), extrudeSettings), [extrudeSettings]);
-  const rightWingGeo = useMemo(() => new THREE.ExtrudeGeometry(createRightWingShape(), extrudeSettings), [extrudeSettings]);
-  const stemGeo = useMemo(() => new THREE.ExtrudeGeometry(createStemShape(), extrudeSettings), [extrudeSettings]);
+  // Geometries for Brand Favicon parts (1:1 with favicon.ico)
+  const redLeftGeo = useMemo(() => new THREE.ExtrudeGeometry(createRedLeftShape(), extrudeSettings), [extrudeSettings]);
+  const redRightGeo = useMemo(() => new THREE.ExtrudeGeometry(createRedRightShape(), extrudeSettings), [extrudeSettings]);
+  const ivoryRibbonGeo = useMemo(() => {
+    const ivorySettings = { ...extrudeSettings, depth: 0.36 };
+    return new THREE.ExtrudeGeometry(createIvoryRibbonShape(), ivorySettings);
+  }, [extrudeSettings]);
 
   // Classic single block fallback geometry
   const classicGeo = useMemo(() => {
@@ -247,12 +247,12 @@ function YMesh() {
     groupRef.current.position.y = posY + floatY;
   });
 
-  // ── Multi-Facet Materials Calibrated per Theme ──────────────
-  const { leftMatProps, rightMatProps, stemMatProps, classicMatProps } = useMemo(() => {
+  // ── Multi-Facet Materials Calibrated to Match favicon.ico ──
+  const { redMatProps, ivoryMatProps, classicMatProps } = useMemo(() => {
     // 1. Apple Liquid Glass Theme
     if (isGlass) {
       return {
-        leftMatProps: {
+        redMatProps: {
           color: "#FF4A1C",
           emissive: "#3D0E05",
           emissiveIntensity: 0.35,
@@ -266,7 +266,7 @@ function YMesh() {
           clearcoat: 1.0,
           clearcoatRoughness: 0.02,
         },
-        rightMatProps: {
+        ivoryMatProps: {
           color: "#FFFFFF",
           emissive: "#1B2848",
           emissiveIntensity: 0.28,
@@ -279,19 +279,6 @@ function YMesh() {
           attenuationDistance: 2.5,
           clearcoat: 1.0,
           clearcoatRoughness: 0.02,
-        },
-        stemMatProps: {
-          color: "#E2E8F0",
-          emissive: "#10182E",
-          emissiveIntensity: 0.22,
-          roughness: 0.03,
-          metalness: 0.03,
-          transmission: 0.96,
-          thickness: 2.4,
-          ior: 1.52,
-          attenuationColor: "#CBD5E1",
-          attenuationDistance: 2.2,
-          clearcoat: 1.0,
         },
         classicMatProps: {
           color: "#FFFFFF",
@@ -321,9 +308,8 @@ function YMesh() {
         clearcoatRoughness: 0.1,
       };
       return {
-        leftMatProps: gold,
-        rightMatProps: { ...gold, color: "#F0DF90" },
-        stemMatProps: gold,
+        redMatProps: gold,
+        ivoryMatProps: { ...gold, color: "#F5E6A3" },
         classicMatProps: gold,
       };
     }
@@ -339,9 +325,8 @@ function YMesh() {
         clearcoatRoughness: 0.03,
       };
       return {
-        leftMatProps: chrome,
-        rightMatProps: chrome,
-        stemMatProps: chrome,
+        redMatProps: chrome,
+        ivoryMatProps: chrome,
         classicMatProps: chrome,
       };
     }
@@ -356,42 +341,33 @@ function YMesh() {
         wireframe: true,
       };
       return {
-        leftMatProps: wire,
-        rightMatProps: wire,
-        stemMatProps: wire,
+        redMatProps: wire,
+        ivoryMatProps: wire,
         classicMatProps: wire,
       };
     }
 
-    // 3. Dark Mode: Dual-Tone Brand Architecture (Vermilion Red Left Wing + Radiant Satin Platinum Right Wing + Titanium Stem)
+    // 3. Dark Mode: Dual-Tone Brand Architecture Matching favicon.ico
+    // Both Left & Right Arms + Left Stem are Vermilion Red, Central Ribbon & Right Stem are Satin Platinum Ivory
     if (isDark) {
       return {
-        leftMatProps: {
-          color: "#FF4A1C", // Signature Vermilion Red
-          emissive: "#380D03",
-          emissiveIntensity: 0.28,
-          roughness: 0.16,
-          metalness: 0.32,
+        redMatProps: {
+          color: "#FF4A1C", // Bold Vermilion Red lacquer (matches favicon.ico red facets)
+          emissive: "#4A1005",
+          emissiveIntensity: 0.32,
+          roughness: 0.14,
+          metalness: 0.04,
           clearcoat: 1.0,
-          clearcoatRoughness: 0.06,
+          clearcoatRoughness: 0.04,
         },
-        rightMatProps: {
-          color: "#F8FAFC", // Radiant platinum silver (mirrors white facet in logo)
+        ivoryMatProps: {
+          color: "#FFFFFF", // Radiant Satin Platinum Ivory (matches favicon.ico white ribbon)
           emissive: "#1E2538",
-          emissiveIntensity: 0.25,
-          roughness: 0.16,
-          metalness: 0.42,
+          emissiveIntensity: 0.28,
+          roughness: 0.14,
+          metalness: 0.04,
           clearcoat: 1.0,
-          clearcoatRoughness: 0.06,
-        },
-        stemMatProps: {
-          color: "#CBD5E1", // Sleek aerospace titanium pillar
-          emissive: "#0F1420",
-          emissiveIntensity: 0.18,
-          roughness: 0.2,
-          metalness: 0.65,
-          clearcoat: 1.0,
-          clearcoatRoughness: 0.06,
+          clearcoatRoughness: 0.04,
         },
         classicMatProps: {
           color: "#E6EBF5",
@@ -404,35 +380,26 @@ function YMesh() {
       };
     }
 
-    // 4. Light (Paper) Mode: Authentic Favicon Dual-Tone (Vermilion Red + Architectural Ivory White Porcelain)
-    // Mirrors the exact favicon color architecture on the warm paper background
+    // 4. Light (Paper) Mode: Authentic Favicon Dual-Tone Matching favicon.ico
+    // Both Left & Right Arms + Left Stem are Vermilion Red lacquer, Central Ribbon & Right Stem are Architectural Ivory Porcelain
     return {
-      leftMatProps: {
-        color: "#FF4A1C", // Signature Vermilion Red lacquer
-        emissive: "#4A1005",
-        emissiveIntensity: 0.28,
-        roughness: 0.14,
-        metalness: 0.25,
-        clearcoat: 1.0,
-        clearcoatRoughness: 0.05,
-      },
-      rightMatProps: {
-        color: "#FAF8F5", // Radiant Architectural Ivory White
-        emissive: "#1C1B18",
-        emissiveIntensity: 0.14,
+      redMatProps: {
+        color: "#FF4A1C", // Bold Vermilion Red lacquer
+        emissive: "#501206",
+        emissiveIntensity: 0.36,
         roughness: 0.12,
-        metalness: 0.3,
+        metalness: 0.03,
         clearcoat: 1.0,
-        clearcoatRoughness: 0.05,
+        clearcoatRoughness: 0.04,
       },
-      stemMatProps: {
-        color: "#EDE8DE", // Architectural Satin Ivory Titanium column
-        emissive: "#161512",
-        emissiveIntensity: 0.12,
-        roughness: 0.16,
-        metalness: 0.35,
+      ivoryMatProps: {
+        color: "#FAF8F5", // Radiant Architectural Ivory Porcelain
+        emissive: "#2A2722",
+        emissiveIntensity: 0.25,
+        roughness: 0.12,
+        metalness: 0.03,
         clearcoat: 1.0,
-        clearcoatRoughness: 0.06,
+        clearcoatRoughness: 0.04,
       },
       classicMatProps: {
         color: "#161514",
@@ -467,21 +434,21 @@ function YMesh() {
           <meshPhysicalMaterial {...classicMatProps} reflectivity={1.0} />
         </mesh>
       ) : (
-        // Bespoke 3D Brand Favicon Monogram Kinetic Assembly (Clean architectural facets, NO ball)
+        // 1:1 Favicon Brand Monogram (Red Left Arm & Stem + Red Right Loop + Interlocking Ivory Ribbon, NO ball)
         <group {...pointerHandlers}>
-          {/* Left Wing Ribbon (Vermilion Red geometric facet) */}
-          <mesh geometry={leftWingGeo} castShadow receiveShadow>
-            <meshPhysicalMaterial {...leftMatProps} reflectivity={1.0} />
+          {/* Part 1: Red Left Ribbon & Left Stem Pillar */}
+          <mesh geometry={redLeftGeo} castShadow receiveShadow>
+            <meshPhysicalMaterial {...redMatProps} reflectivity={1.0} />
           </mesh>
 
-          {/* Right Wing Ribbon (Crisp Ivory / Platinum facet) */}
-          <mesh geometry={rightWingGeo} castShadow receiveShadow>
-            <meshPhysicalMaterial {...rightMatProps} reflectivity={1.0} />
+          {/* Part 2: Red Right Ribbon Loop */}
+          <mesh geometry={redRightGeo} castShadow receiveShadow>
+            <meshPhysicalMaterial {...redMatProps} reflectivity={1.0} />
           </mesh>
 
-          {/* Central Stem Column (Architectural slotted pillar with interlocking saddle) */}
-          <mesh geometry={stemGeo} castShadow receiveShadow>
-            <meshPhysicalMaterial {...stemMatProps} reflectivity={1.0} />
+          {/* Part 3: Ivory Interlocking Diagonal Ribbon & Right Stem Pillar */}
+          <mesh geometry={ivoryRibbonGeo} position={[0, 0, 0.01]} castShadow receiveShadow>
+            <meshPhysicalMaterial {...ivoryMatProps} reflectivity={1.0} />
           </mesh>
         </group>
       )}
@@ -516,7 +483,13 @@ export default function ThreeY({ style }: { style?: React.CSSProperties }) {
         camera={{ position: [0, 0, 5.8], fov: 44 }}
       >
         {/* Studio Lighting calibrated for 360° rotation across light, dark, and Apple Liquid Glass */}
-        <ambientLight intensity={isGlass ? 2.0 : isDark ? 2.2 : 2.0} />
+        <ambientLight intensity={isGlass ? 2.4 : isDark ? 2.6 : 2.5} />
+        {/* Direct Front Fill Light for crisp, luminous front face illumination */}
+        <directionalLight
+          position={[0, 0, 7]}
+          intensity={isGlass ? 3.0 : isDark ? 2.8 : 3.2}
+          color="#FFFFFF"
+        />
         {/* Front-Right Key Light */}
         <directionalLight
           position={[5, 7, 6]}

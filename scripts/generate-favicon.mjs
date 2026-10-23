@@ -92,7 +92,7 @@ async function run() {
   // 6. Vector SVG Favicon for modern sharp rendering
   // Designed to match Yeab's geometric monogram:
   // Dark obsidian squircle, Vermilion accent, Ivory facet
-  const svgFavicon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  const svgFavicon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
   <defs>
     <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#181922"/>
@@ -100,39 +100,51 @@ async function run() {
     </linearGradient>
     <linearGradient id="vermilionGrad" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#FF5A2C"/>
-      <stop offset="100%" stop-color="#E63900"/>
+      <stop offset="100%" stop-color="#D83216"/>
     </linearGradient>
     <linearGradient id="ivoryGrad" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#FFFFFF"/>
-      <stop offset="100%" stop-color="#EAE5DA"/>
+      <stop offset="100%" stop-color="#EDE8DE"/>
     </linearGradient>
-    <filter id="subtleGlow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000000" flood-opacity="0.4"/>
+    <linearGradient id="ivoryShadow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#DCD6C8"/>
+      <stop offset="100%" stop-color="#BCB5A4"/>
+    </linearGradient>
+    <filter id="subtleGlow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="14" stdDeviation="16" flood-color="#000000" flood-opacity="0.45"/>
     </filter>
   </defs>
 
   <!-- Squircle Base -->
-  <rect x="2" y="2" width="60" height="60" rx="14" ry="14" fill="url(#bgGrad)" stroke="rgba(255,255,255,0.12)" stroke-width="1.2"/>
+  <rect x="180" y="180" width="664" height="664" rx="168" ry="168" fill="url(#bgGrad)" stroke="rgba(255,255,255,0.12)" stroke-width="8"/>
 
-  <!-- Geometric Y Monogram -->
+  <!-- Exact 1:1 Brand Favicon Monogram -->
   <g filter="url(#subtleGlow)">
-    <!-- Left Arm (Vermilion Red Geometric) -->
-    <path d="M 17 18 L 26 18 L 32 30 L 26 36 L 17 25 Z" fill="url(#vermilionGrad)"/>
-    <path d="M 22 21 L 24.5 21 L 28.5 29 L 26 31 Z" fill="#12131A"/>
+    <!-- Part 1: Red Left Wing & Left Stem -->
+    <path
+      d="M 302 312 L 430 312 L 486 535 L 486 680 L 453 715 L 453 535 Z M 364 342 L 424 342 L 456 452 L 396 452 Z"
+      fill="url(#vermilionGrad)"
+      fill-rule="evenodd"
+    />
 
-    <!-- Right Arm (Ivory White Facet) -->
-    <path d="M 47 18 L 38 18 L 32 30 L 36 36 L 47 21 Z" fill="url(#ivoryGrad)"/>
-    <path d="M 42 22 L 39.5 22 L 35 30 L 37 32 Z" fill="#12131A"/>
+    <!-- Part 2: Red Right Wing Loop -->
+    <path
+      d="M 579 312 L 721 312 L 593 502 L 526 402 Z M 599 342 L 659 342 L 600 432 L 567 402 Z"
+      fill="url(#vermilionGrad)"
+      fill-rule="evenodd"
+    />
 
-    <!-- Central Stem (Vermilion Red Solid Pillar) -->
-    <path d="M 28 32 L 36 32 L 36 48 L 28 48 Z" fill="url(#vermilionGrad)"/>
-    
-    <!-- Accent Highlight Bevel -->
-    <path d="M 32 32 L 36 32 L 36 48 L 32 48 Z" fill="rgba(0,0,0,0.22)"/>
-    <path d="M 28 32 L 32 32 L 32 48 L 28 48 Z" fill="rgba(255,255,255,0.18)"/>
+    <!-- Part 3: Ivory Interlocking Ribbon & Right Stem -->
+    <path
+      d="M 430 312 L 448 312 L 570 502 L 570 715 L 453 715 L 486 680 L 537 680 L 537 510 L 486 420 L 430 312 Z"
+      fill="url(#ivoryGrad)"
+    />
 
-    <!-- Small signature vermilion dot -->
-    <circle cx="47" cy="18" r="2.5" fill="#FF4A1C"/>
+    <!-- Bottom Base 3D Chamfer -->
+    <path
+      d="M 453 715 L 570 715 L 537 680 L 486 680 Z"
+      fill="url(#ivoryShadow)"
+    />
   </g>
 </svg>`;
 
