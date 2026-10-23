@@ -189,11 +189,11 @@ function YMesh() {
         };
       case "vermilion":
         return {
-          color: "#FF4A1C",
-          emissive: "#4A0E00",
-          emissiveIntensity: 0.35,
-          roughness: 0.1,
-          metalness: 0.85,
+          color: isDark ? "#E6EBF5" : "#FF4A1C",
+          emissive: isDark ? "#121624" : "#4A0E00",
+          emissiveIntensity: isDark ? 0.15 : 0.35,
+          roughness: isDark ? 0.22 : 0.1,
+          metalness: isDark ? 0.35 : 0.85,
           clearcoat: 1.0,
           clearcoatRoughness: 0.08,
           wireframe: false,
@@ -222,8 +222,8 @@ function YMesh() {
         };
       case "wireframe":
         return {
-          color: "#FF4A1C",
-          emissive: "#FF4A1C",
+          color: isDark ? "#E6EBF5" : "#FF4A1C",
+          emissive: isDark ? "#CBD5E1" : "#FF4A1C",
           emissiveIntensity: 0.8,
           roughness: 0.1,
           metalness: 0.5,
@@ -234,14 +234,15 @@ function YMesh() {
       case "obsidian":
       default:
         return {
-          // In dark mode, polished titanium with warm glowing bevels
-          color: isDark ? "#282a32" : "#161514",
-          emissive: isDark ? "#FF4A1C" : "#2A1005",
-          emissiveIntensity: isDark ? 0.28 : 0.18,
-          roughness: 0.07,
-          metalness: 0.92,
+          // In dark mode: radiant sculptural satin platinum (luminous, luxurious, harmonizes with white YEAB text)
+          // In light mode: classic obsidian ink sculpture
+          color: isDark ? "#E6EBF5" : "#161514",
+          emissive: isDark ? "#121624" : "#2A1005",
+          emissiveIntensity: isDark ? 0.15 : 0.18,
+          roughness: isDark ? 0.22 : 0.07,
+          metalness: isDark ? 0.35 : 0.92,
           clearcoat: 1.0,
-          clearcoatRoughness: 0.04,
+          clearcoatRoughness: 0.08,
           wireframe: false,
         };
     }
@@ -307,7 +308,7 @@ export default function ThreeY({ style }: { style?: React.CSSProperties }) {
         camera={{ position: [0, 0, 5.8], fov: 44 }}
       >
         {/* Studio Lighting calibrated for light, dark, and Apple Liquid Glass */}
-        <ambientLight intensity={isDark ? 1.8 : 1.4} />
+        <ambientLight intensity={isGlass ? 1.8 : isDark ? 2.4 : 1.4} />
         <directionalLight
           position={[5, 8, 6]}
           intensity={isGlass ? 4.5 : 3.4}
@@ -315,22 +316,22 @@ export default function ThreeY({ style }: { style?: React.CSSProperties }) {
         />
         <directionalLight
           position={[-6, -4, 4]}
-          intensity={isGlass ? 3.0 : 2.8}
-          color={isGlass ? "#38BDF8" : "#FF4A1C"}
+          intensity={isGlass ? 3.0 : isDark ? 2.4 : 2.8}
+          color={isGlass ? "#38BDF8" : isDark ? "#CBD5E1" : "#FF4A1C"}
         />
         <directionalLight
           position={[-5, 6, -3]}
           intensity={2.0}
-          color={isGlass ? "#FFFFFF" : "#E8F0FE"}
+          color={isGlass ? "#FFFFFF" : isDark ? "#E2E8F0" : "#E8F0FE"}
         />
         <pointLight
           position={[0, -4, 3]}
-          intensity={2.2}
-          color={isGlass ? "#38BDF8" : "#FF7A3D"}
+          intensity={isDark ? 1.6 : 2.2}
+          color={isGlass ? "#38BDF8" : isDark ? "#94A3B8" : "#FF7A3D"}
         />
         <pointLight
           position={[0, 2, 4]}
-          intensity={isGlass ? 2.8 : 1.8}
+          intensity={isGlass ? 2.8 : isDark ? 2.4 : 1.8}
           color="#FFFFFF"
         />
 
