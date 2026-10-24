@@ -170,6 +170,7 @@ export default function CmsEditor() {
     highlight: "",
   });
   const [showAddReview, setShowAddReview] = useState(false);
+  const [showEditIntro, setShowEditIntro] = useState(false);
 
   const [isMobile, setIsMobile] = useState(false);
 
@@ -1407,22 +1408,145 @@ export default function CmsEditor() {
                   Real-time sync to portfolio
                 </span>
               </div>
-              <button
-                onClick={() => setShowAddReview(!showAddReview)}
+              <div style={{ display: "flex", gap: 5 }}>
+                <button
+                  type="button"
+                  onClick={() => setShowEditIntro(!showEditIntro)}
+                  style={{
+                    padding: "4px 8px",
+                    background: showEditIntro ? "rgba(255, 74, 28, 0.25)" : "rgba(255, 74, 28, 0.1)",
+                    border: "1px solid rgba(255, 74, 28, 0.35)",
+                    borderRadius: 6,
+                    color: "var(--vermilion, #FF4A1C)",
+                    fontSize: "0.64rem",
+                    fontWeight: 700,
+                    cursor: "pointer",
+                  }}
+                >
+                  {showEditIntro ? "✕ Close Intro" : "🎬 Intro Settings"}
+                </button>
+                <button
+                  onClick={() => setShowAddReview(!showAddReview)}
+                  style={{
+                    padding: "4px 8px",
+                    background: "linear-gradient(135deg, #14a800, #22c55e)",
+                    border: "none",
+                    borderRadius: 6,
+                    color: "#fff",
+                    fontSize: "0.64rem",
+                    fontWeight: 700,
+                    cursor: "pointer",
+                  }}
+                >
+                  {showAddReview ? "✕ Cancel" : "+ Add Job"}
+                </button>
+              </div>
+            </div>
+
+            {/* Upwork Intro Editor Form */}
+            {showEditIntro && (
+              <div
                 style={{
-                  padding: "4px 8px",
-                  background: "linear-gradient(135deg, #14a800, #22c55e)",
-                  border: "none",
-                  borderRadius: 6,
-                  color: "#fff",
-                  fontSize: "0.64rem",
-                  fontWeight: 700,
-                  cursor: "pointer",
+                  padding: 12,
+                  background: "rgba(255, 74, 28, 0.06)",
+                  border: "1px solid rgba(255, 74, 28, 0.25)",
+                  borderRadius: 10,
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 8,
+                  marginBottom: 10,
                 }}
               >
-                {showAddReview ? "✕ Cancel" : "+ Add Upwork Job"}
-              </button>
-            </div>
+                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                  <span style={{ fontSize: "0.85rem" }}>🎬</span>
+                  <span style={{ fontWeight: 700, color: "#FF4A1C", fontSize: "0.7rem" }}>
+                    Upwork Intro &amp; Spotlight Settings
+                  </span>
+                </div>
+
+                <div>
+                  <label style={{ fontSize: "0.58rem", color: "#aaa", display: "block", marginBottom: 2 }}>
+                    Profile Headline
+                  </label>
+                  <input
+                    type="text"
+                    value={cms.overrides.custom["upwork_intro_headline"] ?? ((SITE as any).upworkIntro?.headline || "")}
+                    onChange={(e) => cms.setOverride("custom", "upwork_intro_headline", e.target.value)}
+                    style={{
+                      width: "100%",
+                      padding: "6px 8px",
+                      background: "rgba(0,0,0,0.5)",
+                      border: "1px solid rgba(255,255,255,0.1)",
+                      borderRadius: 6,
+                      color: "#fff",
+                      fontSize: "0.68rem",
+                    }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ fontSize: "0.58rem", color: "#aaa", display: "block", marginBottom: 2 }}>
+                    Callout Highlight Quote
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={cms.overrides.custom["upwork_intro_callout"] ?? ((SITE as any).upworkIntro?.callout || "")}
+                    onChange={(e) => cms.setOverride("custom", "upwork_intro_callout", e.target.value)}
+                    style={{
+                      width: "100%",
+                      padding: "6px 8px",
+                      background: "rgba(0,0,0,0.5)",
+                      border: "1px solid rgba(255,255,255,0.1)",
+                      borderRadius: 6,
+                      color: "#fff",
+                      fontSize: "0.68rem",
+                      resize: "vertical",
+                    }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ fontSize: "0.58rem", color: "#aaa", display: "block", marginBottom: 2 }}>
+                    Value Pitch Statement
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={cms.overrides.custom["upwork_intro_statement"] ?? ((SITE as any).upworkIntro?.statement || "")}
+                    onChange={(e) => cms.setOverride("custom", "upwork_intro_statement", e.target.value)}
+                    style={{
+                      width: "100%",
+                      padding: "6px 8px",
+                      background: "rgba(0,0,0,0.5)",
+                      border: "1px solid rgba(255,255,255,0.1)",
+                      borderRadius: 6,
+                      color: "#fff",
+                      fontSize: "0.68rem",
+                      resize: "vertical",
+                    }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ fontSize: "0.58rem", color: "#aaa", display: "block", marginBottom: 2 }}>
+                    Hourly Rate
+                  </label>
+                  <input
+                    type="text"
+                    value={cms.overrides.custom["upwork_intro_rate"] ?? ((SITE as any).upworkIntro?.hourlyRate || "$7.00/hr")}
+                    onChange={(e) => cms.setOverride("custom", "upwork_intro_rate", e.target.value)}
+                    style={{
+                      width: "100%",
+                      padding: "6px 8px",
+                      background: "rgba(0,0,0,0.5)",
+                      border: "1px solid rgba(255,255,255,0.1)",
+                      borderRadius: 6,
+                      color: "#fff",
+                      fontSize: "0.68rem",
+                    }}
+                  />
+                </div>
+              </div>
+            )}
 
             {/* Add Upwork Review Form */}
             {showAddReview && (

@@ -295,6 +295,42 @@ export const SITE = {
     ],
   },
 
+  // ── Authentic Upwork Intro & Video Showcase ───────────────
+  upworkIntro: {
+    videoThumbnail: "/upwork-video-thumbnail.jpg",
+    videoShowreel:  "/upwork-image-raw.jpg",
+    badge:          "✓ TOP RATED YouTube Thumbnail & Logo Designer ✓",
+    headline:       "Logo Designer | YouTube Thumbnail Designer | Graphics Designer",
+    experienceYears: "5 years of experience",
+    callout:        "💛 Your next big idea deserves the spotlight! Message me now and let this full-time freelancer help 💛",
+    statement:
+      "Logo and YouTube Thumbnail Design is my passion! If it's not your thing, I'm here to help. With 3+ years of dedicated freelancing, pixel-perfect attention to detail, and 100% on-time delivery, I promise quality work that brings your vision to life!",
+    services: [
+      "Logo Design & Brand Identity",
+      "High-CTR YouTube Thumbnails",
+      "Graphics Design & Vector Art",
+      "Product & Display Packaging",
+      "Business Cards & Stationery",
+      "Flyers, Banners & Social Kits",
+    ],
+    tools: [
+      "Adobe Illustrator",
+      "Adobe Photoshop",
+      "Canva",
+      "AI Creative Tools",
+      "Adobe After Effects",
+    ],
+    guarantees: [
+      { icon: "⚡", label: "On-time delivery", desc: "100% on-time record across all jobs" },
+      { icon: "🎯", label: "Attention to detail", desc: "Precision optical grids and typography" },
+      { icon: "💡", label: "Personalized solutions", desc: "Tailored for high CTR and brand resonance" },
+      { icon: "⭐", label: "5.0 ★ Client feedback", desc: "Consistently rated 5 out of 5 stars" },
+      { icon: "🔄", label: "Dedicated revisions", desc: "Continuous refinement until you're thrilled" },
+    ],
+    hourlyRate:     "$7.00/hr",
+    profileUrl:     "https://www.upwork.com/freelancers/~011d172ba3b092f906",
+  },
+
   // ── All 11 Real Upwork Contracts & Client Feedback ────────
   testimonials: [
     {

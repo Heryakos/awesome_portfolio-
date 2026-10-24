@@ -7,6 +7,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SITE } from "../../content/site";
 import CertificateLightbox from "./CertificateLightbox";
 import { useCms } from "./CmsContext";
+import UpworkIntroCard from "./UpworkIntroCard";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -370,24 +371,60 @@ export default function About() {
               </p>
             ))}
 
-            {/* Education badge */}
-            <div style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "0.6rem",
-              border: "1px solid rgba(239,235,227,0.15)",
-              padding: "0.5rem 1rem",
-              borderRadius: "2px",
-              marginTop: "0.5rem",
-            }}>
-              <span style={{ fontSize:"1rem" }} aria-hidden="true">🎓</span>
-              <span
-                id="cms-education"
-                className="t-label"
-                style={{ color:"rgba(239,235,227,0.5)" }}
+            {/* Education badge & Upwork intro jump */}
+            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "0.6rem", marginTop: "0.5rem" }}>
+              <div style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.6rem",
+                border: "1px solid rgba(239,235,227,0.15)",
+                padding: "0.5rem 1rem",
+                borderRadius: "2px",
+              }}>
+                <span style={{ fontSize:"1rem" }} aria-hidden="true">🎓</span>
+                <span
+                  id="cms-education"
+                  className="t-label"
+                  style={{ color:"rgba(239,235,227,0.5)" }}
+                >
+                  {SITE.education.degree} · {SITE.education.school} · {SITE.education.year}
+                </span>
+              </div>
+
+              <a
+                href="#upwork-intro"
+                onClick={(e) => {
+                  e.preventDefault();
+                  document.getElementById("upwork-intro")?.scrollIntoView({ behavior: "smooth" });
+                }}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "0.45rem",
+                  background: "rgba(255, 74, 28, 0.08)",
+                  border: "1px solid rgba(255, 74, 28, 0.3)",
+                  padding: "0.5rem 0.95rem",
+                  borderRadius: "2px",
+                  color: "var(--paper)",
+                  textDecoration: "none",
+                  fontSize: "0.72rem",
+                  fontFamily: "var(--font-mono)",
+                  fontWeight: 600,
+                  transition: "all 0.2s ease",
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLElement).style.background = "var(--vermilion)";
+                  (e.currentTarget as HTMLElement).style.color = "#FFFFFF";
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLElement).style.background = "rgba(255, 74, 28, 0.08)";
+                  (e.currentTarget as HTMLElement).style.color = "var(--paper)";
+                }}
               >
-                {SITE.education.degree} · {SITE.education.school} · {SITE.education.year}
-              </span>
+                <span style={{ color: "var(--vermilion)", fontWeight: 700 }}>▶</span>
+                <span>Meet Yeab · Upwork Intro Video &amp; Stats</span>
+                <span style={{ opacity: 0.6 }}>↓</span>
+              </a>
             </div>
           </div>
 
@@ -893,8 +930,12 @@ export default function About() {
             </div>
           </div>
 
+          {/* ── Spotlight Feature: Authentic Upwork Intro & Video Showcase ── */}
+          <UpworkIntroCard />
+
           {/* Reputation Stats & Badges Bar */}
           <div
+            id="reviews-list"
             style={{
               display: "grid",
               gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
